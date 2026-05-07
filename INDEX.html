@@ -1,0 +1,1983 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Comercial Base</title>
+  <style>
+    :root {
+      --bg: #eef3f8;
+      --panel: #ffffff;
+      --panel-alt: #f8fbfe;
+      --text: #18314f;
+      --muted: #5f7287;
+      --line: #d7e1eb;
+      --brand: #1d4ed8;
+      --brand-soft: #dbeafe;
+      --success: #15803d;
+      --success-soft: #dcfce7;
+      --warning: #b45309;
+      --warning-soft: #fef3c7;
+      --danger: #b91c1c;
+      --danger-soft: #fee2e2;
+      --shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --radius-sm: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(29, 78, 216, 0.12), transparent 25rem),
+        radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.08), transparent 24rem),
+        var(--bg);
+    }
+
+    .layout {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 300px 1fr;
+    }
+
+    .sidebar {
+      background: linear-gradient(180deg, #10203a 0%, #182c4d 100%);
+      color: #f8fafc;
+      padding: 28px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .brand,
+    .sidebar-note {
+      padding: 20px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    .brand h1 {
+      margin: 10px 0 8px;
+      font-size: 28px;
+      line-height: 1.05;
+    }
+
+    .brand p,
+    .sidebar-note p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.75);
+      line-height: 1.5;
+    }
+
+    .nav {
+      display: grid;
+      gap: 10px;
+    }
+
+    .nav button {
+      border: 1px solid transparent;
+      background: transparent;
+      color: #dbeafe;
+      text-align: left;
+      padding: 14px 16px;
+      border-radius: 16px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .nav button:hover,
+    .nav button.active {
+      background: rgba(37, 99, 235, 0.24);
+      border-color: rgba(147, 197, 253, 0.18);
+      color: #ffffff;
+    }
+
+    .sidebar-note {
+      margin-top: auto;
+    }
+
+    .content {
+      padding: 28px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .topbar h2 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.05;
+    }
+
+    .topbar p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      max-width: 720px;
+      line-height: 1.55;
+    }
+
+    .toolbar,
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--brand);
+      color: #ffffff;
+      box-shadow: var(--shadow);
+    }
+
+    .btn-secondary {
+      background: var(--panel);
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    .btn-danger {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .hero,
+    .card {
+      background: var(--panel);
+      border: 1px solid rgba(215, 225, 235, 0.9);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 24px;
+      margin-bottom: 18px;
+      background:
+        linear-gradient(135deg, rgba(219, 234, 254, 0.85), rgba(255, 255, 255, 0.98) 55%, rgba(220, 252, 231, 0.8));
+    }
+
+    .hero h3 {
+      margin: 10px 0 8px;
+      font-size: 28px;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 760px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .stats {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-bottom: 18px;
+    }
+
+    .two-columns {
+      grid-template-columns: 1.2fr 0.9fr;
+    }
+
+    .three-columns {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card {
+      padding: 22px;
+    }
+
+    .stat-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .stat-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      background: var(--panel-alt);
+    }
+
+    .stat-card h3,
+    .section-title {
+      margin: 0;
+    }
+
+    .stat-card p,
+    .section-subtitle,
+    .helper,
+    .empty-state p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .stat-number {
+      font-size: 30px;
+      font-weight: 800;
+    }
+
+    .section-title {
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+
+    .section-subtitle {
+      margin-bottom: 20px;
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .stack,
+    .roadmap,
+    .list {
+      display: grid;
+      gap: 14px;
+    }
+
+    form {
+      display: grid;
+      gap: 16px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: #ffffff;
+      color: var(--text);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .hint {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .form-note {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: var(--brand-soft);
+      color: var(--brand);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .filter-bar {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .filter-bar.compact {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .list-item,
+    .roadmap-item {
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: #fbfdff;
+    }
+
+    .list-head,
+    .status-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .list-item h4 {
+      margin: 0 0 6px;
+      font-size: 18px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .badge-blue {
+      background: var(--brand-soft);
+      color: var(--brand);
+    }
+
+    .badge-green {
+      background: var(--success-soft);
+      color: var(--success);
+    }
+
+    .badge-yellow {
+      background: var(--warning-soft);
+      color: var(--warning);
+    }
+
+    .badge-red {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .empty-state {
+      padding: 30px 20px;
+      border-radius: 18px;
+      border: 1px dashed #bfd0e2;
+      background: #f8fbfe;
+      text-align: center;
+    }
+
+    .empty-state strong,
+    .roadmap-item strong {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #9a3412;
+      line-height: 1.55;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    @media (max-width: 1180px) {
+      .stats,
+      .three-columns {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .two-columns {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 880px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      .topbar {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .stats,
+      .three-columns,
+      .form-grid,
+      .filter-bar,
+      .filter-bar.compact {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="eyebrow">Base editable</span>
+        <h1>Panel Comercial</h1>
+        <p>Version en blanco para entregar, cargar informacion real y seguir ampliando el proyecto sin depender de React ni build tools.</p>
+      </div>
+
+      <nav class="nav" aria-label="Navegacion principal">
+        <button class="active" data-panel="dashboard">Dashboard</button>
+        <button data-panel="locales">Locales</button>
+        <button data-panel="tareas">Mantenimiento</button>
+        <button data-panel="incidentes">Incidentes</button>
+        <button data-panel="roadmap">Proximo desarrollo</button>
+      </nav>
+
+      <div class="sidebar-note">
+        <span class="eyebrow">Listo para usar</span>
+        <p>Los datos quedan guardados en este navegador. Puedes cargar informacion real ahora mismo y luego seguir extendiendo el archivo con nuevos modulos.</p>
+      </div>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div>
+          <h2 id="page-title">Dashboard</h2>
+          <p id="page-copy">Una base limpia para administrar locales, tareas e incidentes. Todo parte vacio y se completa desde los formularios de cada modulo.</p>
+        </div>
+
+        <div class="toolbar">
+          <button class="btn btn-secondary" id="export-button" type="button">Exportar JSON</button>
+          <button class="btn btn-danger" id="reset-button" type="button">Limpiar datos</button>
+        </div>
+      </header>
+
+      <section class="panel active" id="panel-dashboard">
+        <div class="hero">
+          <span class="eyebrow" style="color: #1d4ed8;">Proyecto base</span>
+          <h3>App vacia, ordenada y preparada para crecer</h3>
+          <p>Esta version no trae datos de ejemplo. Sirve como maqueta funcional para una persona externa y como punto de partida para agregar nuevos flujos como contratos, cobranza, usuarios, reportes o recordatorios.</p>
+        </div>
+
+        <div class="grid stats">
+          <article class="card stat-card">
+            <div class="stat-icon">🏬</div>
+            <div>
+              <h3>Locales</h3>
+              <div class="stat-number" id="stat-locales">0</div>
+              <p>Total de locales registrados</p>
+            </div>
+          </article>
+
+          <article class="card stat-card">
+            <div class="stat-icon">✅</div>
+            <div>
+              <h3>Ocupados</h3>
+              <div class="stat-number" id="stat-ocupados">0</div>
+              <p>Locales marcados como ocupados</p>
+            </div>
+          </article>
+
+          <article class="card stat-card">
+            <div class="stat-icon">🛠</div>
+            <div>
+              <h3>Tareas activas</h3>
+              <div class="stat-number" id="stat-tareas">0</div>
+              <p>Pendientes o en progreso</p>
+            </div>
+          </article>
+
+          <article class="card stat-card">
+            <div class="stat-icon">⚠</div>
+            <div>
+              <h3>Incidentes abiertos</h3>
+              <div class="stat-number" id="stat-incidentes">0</div>
+              <p>Casos aun sin resolver</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="grid two-columns">
+          <article class="card">
+            <h3 class="section-title">Resumen rapido</h3>
+            <p class="section-subtitle">El panel empieza vacio y se actualiza automaticamente cuando agregas informacion.</p>
+            <div class="list" id="dashboard-summary"></div>
+          </article>
+
+          <article class="card">
+            <h3 class="section-title">Que ya puedes hacer</h3>
+            <p class="section-subtitle">La base queda util desde el primer dia.</p>
+            <div class="roadmap">
+              <div class="roadmap-item">
+                <strong>Registrar locales</strong>
+                <span class="helper">Numero, nombre, rubro, contacto y estado.</span>
+              </div>
+              <div class="roadmap-item">
+                <strong>Editar registros</strong>
+                <span class="helper">Corregir datos ya cargados sin borrar y volver a crear.</span>
+              </div>
+              <div class="roadmap-item">
+                <strong>Controlar incidentes y mantenimiento</strong>
+                <span class="helper">Actualizar estado, eliminar o exportar informacion.</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-locales">
+        <div class="grid two-columns">
+          <article class="card">
+            <h3 class="section-title" id="locale-form-title">Agregar local</h3>
+            <p class="section-subtitle">Carga informacion real desde cero. Puedes dejar campos vacios si aun no tienes todos los datos.</p>
+
+            <form id="locale-form">
+              <div class="form-note" id="locale-form-note" hidden>Editando local existente.</div>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="locale-number">Numero del local</label>
+                  <input id="locale-number" name="number" placeholder="Ej: 101" required />
+                </div>
+
+                <div class="field">
+                  <label for="locale-name">Nombre comercial</label>
+                  <input id="locale-name" name="name" placeholder="Ej: Local Norte" required />
+                </div>
+
+                <div class="field">
+                  <label for="locale-tenant">Responsable o arrendatario</label>
+                  <input id="locale-tenant" name="tenant" placeholder="Ej: Maria Soto" />
+                </div>
+
+                <div class="field">
+                  <label for="locale-phone">Telefono</label>
+                  <input id="locale-phone" name="phone" placeholder="Ej: +56 9 1111 2222" />
+                </div>
+
+                <div class="field">
+                  <label for="locale-category">Rubro</label>
+                  <input id="locale-category" name="category" placeholder="Ej: Gastronomia" />
+                </div>
+
+                <div class="field">
+                  <label for="locale-status">Estado</label>
+                  <select id="locale-status" name="status">
+                    <option value="disponible">Disponible</option>
+                    <option value="ocupado">Ocupado</option>
+                    <option value="reservado">Reservado</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="actions">
+                <button class="btn btn-primary" id="locale-submit" type="submit">Guardar local</button>
+                <button class="btn btn-secondary" id="locale-cancel" type="button" hidden>Cancelar edicion</button>
+                <span class="hint">Se almacena en el navegador automaticamente.</span>
+              </div>
+            </form>
+          </article>
+
+          <article class="card">
+            <div class="status-row">
+              <div>
+                <h3 class="section-title">Listado de locales</h3>
+                <p class="section-subtitle">Desde aqui puedes revisar, editar, cambiar estado o eliminar.</p>
+              </div>
+              <span class="badge badge-blue" id="locales-count-badge">0 locales</span>
+            </div>
+            <div class="filter-bar">
+              <input id="locales-search" type="search" placeholder="Buscar por numero, nombre, rubro o contacto" />
+              <select id="locales-filter-status">
+                <option value="todos">Todos los estados</option>
+                <option value="disponible">Disponible</option>
+                <option value="ocupado">Ocupado</option>
+                <option value="reservado">Reservado</option>
+              </select>
+            </div>
+            <div class="list" id="locales-list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-tareas">
+        <div class="grid two-columns">
+          <article class="card">
+            <h3 class="section-title" id="task-form-title">Nueva tarea</h3>
+            <p class="section-subtitle">Modulo pensado para mantencion general, proveedores o pendientes operativos.</p>
+
+            <form id="task-form">
+              <div class="form-note" id="task-form-note" hidden>Editando tarea existente.</div>
+              <div class="form-grid">
+                <div class="field full">
+                  <label for="task-title">Titulo</label>
+                  <input id="task-title" name="title" placeholder="Ej: Revision de luminarias" required />
+                </div>
+
+                <div class="field">
+                  <label for="task-area">Area</label>
+                  <input id="task-area" name="area" placeholder="Ej: Estacionamiento" />
+                </div>
+
+                <div class="field">
+                  <label for="task-date">Fecha objetivo</label>
+                  <input id="task-date" name="date" type="date" />
+                </div>
+
+                <div class="field full">
+                  <label for="task-status">Estado</label>
+                  <select id="task-status" name="status">
+                    <option value="pendiente">Pendiente</option>
+                    <option value="en progreso">En progreso</option>
+                    <option value="completada">Completada</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="actions">
+                <button class="btn btn-primary" id="task-submit" type="submit">Guardar tarea</button>
+                <button class="btn btn-secondary" id="task-cancel" type="button" hidden>Cancelar edicion</button>
+                <span class="hint">Ideal para empezar con pendientes reales del proyecto.</span>
+              </div>
+            </form>
+          </article>
+
+          <article class="card">
+            <div class="status-row">
+              <div>
+                <h3 class="section-title">Tareas registradas</h3>
+                <p class="section-subtitle">Puedes actualizar estado o corregir datos sin volver a crear la tarea.</p>
+              </div>
+              <span class="badge badge-blue" id="tareas-count-badge">0 tareas</span>
+            </div>
+            <div class="filter-bar compact">
+              <input id="tasks-search" type="search" placeholder="Buscar por titulo o area" />
+              <select id="tasks-filter-status">
+                <option value="todos">Todos los estados</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="en progreso">En progreso</option>
+                <option value="completada">Completada</option>
+              </select>
+            </div>
+            <div class="list" id="tasks-list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-incidentes">
+        <div class="grid two-columns">
+          <article class="card">
+            <h3 class="section-title" id="incident-form-title">Nuevo incidente</h3>
+            <p class="section-subtitle">Usalo para seguridad, infraestructura, reclamos o cualquier evento operativo.</p>
+
+            <form id="incident-form">
+              <div class="form-note" id="incident-form-note" hidden>Editando incidente existente.</div>
+              <div class="form-grid">
+                <div class="field full">
+                  <label for="incident-description">Descripcion</label>
+                  <textarea id="incident-description" name="description" placeholder="Describe lo ocurrido" required></textarea>
+                </div>
+
+                <div class="field">
+                  <label for="incident-level">Nivel</label>
+                  <select id="incident-level" name="level">
+                    <option value="bajo">Bajo</option>
+                    <option value="medio">Medio</option>
+                    <option value="alto">Alto</option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label for="incident-status">Estado</label>
+                  <select id="incident-status" name="status">
+                    <option value="abierto">Abierto</option>
+                    <option value="en revision">En revision</option>
+                    <option value="resuelto">Resuelto</option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label for="incident-date">Fecha y hora</label>
+                  <input id="incident-date" name="date" type="datetime-local" />
+                </div>
+
+                <div class="field">
+                  <label for="incident-source">Reportado por</label>
+                  <input id="incident-source" name="source" placeholder="Ej: Local 3 o Guardia" />
+                </div>
+              </div>
+
+              <div class="actions">
+                <button class="btn btn-primary" id="incident-submit" type="submit">Guardar incidente</button>
+                <button class="btn btn-secondary" id="incident-cancel" type="button" hidden>Cancelar edicion</button>
+                <span class="hint">Despues puedes cambiar prioridad o marcarlo resuelto.</span>
+              </div>
+            </form>
+          </article>
+
+          <article class="card">
+            <div class="status-row">
+              <div>
+                <h3 class="section-title">Incidentes registrados</h3>
+                <p class="section-subtitle">Base simple para no perder trazabilidad operativa.</p>
+              </div>
+              <span class="badge badge-blue" id="incidentes-count-badge">0 incidentes</span>
+            </div>
+            <div class="filter-bar compact">
+              <input id="incidents-search" type="search" placeholder="Buscar por descripcion u origen" />
+              <select id="incidents-filter-status">
+                <option value="todos">Todos los estados</option>
+                <option value="abierto">Abierto</option>
+                <option value="en revision">En revision</option>
+                <option value="resuelto">Resuelto</option>
+              </select>
+            </div>
+            <div class="filter-bar compact" style="margin-top: -4px;">
+              <select id="incidents-filter-level">
+                <option value="todos">Todos los niveles</option>
+                <option value="bajo">Bajo</option>
+                <option value="medio">Medio</option>
+                <option value="alto">Alto</option>
+              </select>
+              <div class="hint" style="align-self:center;">Combina estado y nivel para acotar resultados.</div>
+            </div>
+            <div class="list" id="incidents-list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-roadmap">
+        <div class="grid three-columns">
+          <article class="card">
+            <h3 class="section-title">Modulos sugeridos</h3>
+            <p class="section-subtitle">Siguientes piezas naturales para continuar el desarrollo.</p>
+            <div class="roadmap">
+              <div class="roadmap-item">
+                <strong>Contratos y vencimientos</strong>
+                <span class="helper">Fechas de renovacion, alertas y documentos.</span>
+              </div>
+              <div class="roadmap-item">
+                <strong>Cobranza</strong>
+                <span class="helper">Canon, gastos comunes, pagos pendientes y estado mensual.</span>
+              </div>
+              <div class="roadmap-item">
+                <strong>Reportes</strong>
+                <span class="helper">Exportaciones, indicadores y panel de ocupacion historica.</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="card">
+            <h3 class="section-title">Ideas de experiencia</h3>
+            <p class="section-subtitle">Mejoras utiles sin cambiar la base del proyecto.</p>
+            <div class="roadmap">
+              <div class="roadmap-item">
+                <strong>Buscador y filtros</strong>
+                <span class="helper">Por estado, rubro, nivel o texto libre.</span>
+              </div>
+              <div class="roadmap-item">
+                <strong>Login o perfiles</strong>
+                <span class="helper">Si luego la persona externa necesita acceso restringido.</span>
+              </div>
+              <div class="roadmap-item">
+                <strong>Adjuntos o evidencias</strong>
+                <span class="helper">Para incidentes o mantenimiento con respaldo visual.</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="card">
+            <h3 class="section-title">Base tecnica</h3>
+            <p class="section-subtitle">Quedo pensada para crecer sin rehacer todo.</p>
+            <div class="roadmap">
+              <div class="roadmap-item">
+                <strong>Datos persistentes</strong>
+                <span class="helper">Hoy usa localStorage para pruebas y uso liviano.</span>
+              </div>
+              <div class="roadmap-item">
+                <strong>Sin dependencias</strong>
+                <span class="helper">Abre directo en navegador como archivo local.</span>
+              </div>
+              <div class="roadmap-item">
+                <strong>Escalable</strong>
+                <span class="helper">Cuando quieras, esto se puede migrar a React o backend real.</span>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="footer-note">
+          Esta base esta pensada para entrega temprana. Si quieres, en el siguiente paso puedo seguir con el punto 2 del orden: buscador y filtros.
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const pageMeta = {
+      dashboard: {
+        title: "Dashboard",
+        copy: "Una base limpia para administrar locales, tareas e incidentes. Todo parte vacio y se completa desde los formularios de cada modulo."
+      },
+      locales: {
+        title: "Locales",
+        copy: "Carga los locales reales del proyecto y cambia su estado cuando quieras."
+      },
+      tareas: {
+        title: "Mantenimiento",
+        copy: "Registra pendientes operativos, tecnicos o administrativos y hazles seguimiento."
+      },
+      incidentes: {
+        title: "Incidentes",
+        copy: "Guarda eventos, problemas o alertas para no perder trazabilidad."
+      },
+      roadmap: {
+        title: "Proximo desarrollo",
+        copy: "Una hoja de ruta simple para seguir completando la app sobre esta misma base."
+      }
+    };
+
+    const state = {
+      locales: [],
+      tareas: [],
+      incidentes: []
+    };
+    const editing = {
+      locale: null,
+      task: null,
+      incident: null
+    };
+    const filters = {
+      locales: { query: "", status: "todos" },
+      tasks: { query: "", status: "todos" },
+      incidents: { query: "", status: "todos", level: "todos" }
+    };
+
+    const dashboardSummary = document.getElementById("dashboard-summary");
+    const localesList = document.getElementById("locales-list");
+    const tasksList = document.getElementById("tasks-list");
+    const incidentsList = document.getElementById("incidents-list");
+
+    document.querySelectorAll(".nav button").forEach((button) => {
+      button.addEventListener("click", () => switchPanel(button.dataset.panel));
+    });
+
+    document.getElementById("locale-cancel").addEventListener("click", () => resetFormMode("locale"));
+    document.getElementById("task-cancel").addEventListener("click", () => resetFormMode("task"));
+    document.getElementById("incident-cancel").addEventListener("click", () => resetFormMode("incident"));
+    document.getElementById("locales-search").addEventListener("input", (event) => {
+      filters.locales.query = event.target.value.trim();
+      renderLocales();
+    });
+    document.getElementById("locales-filter-status").addEventListener("change", (event) => {
+      filters.locales.status = event.target.value;
+      renderLocales();
+    });
+    document.getElementById("tasks-search").addEventListener("input", (event) => {
+      filters.tasks.query = event.target.value.trim();
+      renderTasks();
+    });
+    document.getElementById("tasks-filter-status").addEventListener("change", (event) => {
+      filters.tasks.status = event.target.value;
+      renderTasks();
+    });
+    document.getElementById("incidents-search").addEventListener("input", (event) => {
+      filters.incidents.query = event.target.value.trim();
+      renderIncidents();
+    });
+    document.getElementById("incidents-filter-status").addEventListener("change", (event) => {
+      filters.incidents.status = event.target.value;
+      renderIncidents();
+    });
+    document.getElementById("incidents-filter-level").addEventListener("change", (event) => {
+      filters.incidents.level = event.target.value;
+      renderIncidents();
+    });
+
+    document.getElementById("locale-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget);
+      const payload = {
+        number: formData.get("number").trim(),
+        name: formData.get("name").trim(),
+        tenant: formData.get("tenant").trim(),
+        phone: formData.get("phone").trim(),
+        category: formData.get("category").trim(),
+        status: formData.get("status")
+      };
+
+      try {
+        if (editing.locale) {
+          await api(`/api/locales/${editing.locale}`, { method: "PUT", body: payload });
+        } else {
+          await api("/api/locales", { method: "POST", body: payload });
+        }
+        resetFormMode("locale");
+        await loadState();
+        switchPanel("locales");
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+
+    document.getElementById("task-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget);
+      const payload = {
+        title: formData.get("title").trim(),
+        area: formData.get("area").trim(),
+        date: formData.get("date"),
+        status: formData.get("status")
+      };
+
+      try {
+        if (editing.task) {
+          await api(`/api/tareas/${editing.task}`, { method: "PUT", body: payload });
+        } else {
+          await api("/api/tareas", { method: "POST", body: payload });
+        }
+        resetFormMode("task");
+        await loadState();
+        switchPanel("tareas");
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+
+    document.getElementById("incident-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget);
+      const payload = {
+        description: formData.get("description").trim(),
+        level: formData.get("level"),
+        status: formData.get("status"),
+        date: formData.get("date"),
+        source: formData.get("source").trim()
+      };
+
+      try {
+        if (editing.incident) {
+          await api(`/api/incidentes/${editing.incident}`, { method: "PUT", body: payload });
+        } else {
+          await api("/api/incidentes", { method: "POST", body: payload });
+        }
+        resetFormMode("incident");
+        await loadState();
+        switchPanel("incidentes");
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+
+    document.getElementById("reset-button").addEventListener("click", async () => {
+      const confirmed = window.confirm("Se eliminaran todos los datos guardados en la base de datos local. Quieres continuar?");
+      if (!confirmed) return;
+
+      try {
+        await Promise.all([
+          ...state.locales.map((item) => api(`/api/locales/${item.id}`, { method: "DELETE" })),
+          ...state.tareas.map((item) => api(`/api/tareas/${item.id}`, { method: "DELETE" })),
+          ...state.incidentes.map((item) => api(`/api/incidentes/${item.id}`, { method: "DELETE" }))
+        ]);
+        resetAllFormModes();
+        resetAllFilters();
+        await loadState();
+        switchPanel("dashboard");
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+
+    document.getElementById("export-button").addEventListener("click", () => {
+      const payload = JSON.stringify(state, null, 2);
+      const blob = new Blob([payload], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "panel-comercial-datos.json";
+      link.click();
+      URL.revokeObjectURL(url);
+    });
+
+    async function api(url, options = {}) {
+      const response = await fetch(url, {
+        method: options.method || "GET",
+        headers: { "Content-Type": "application/json" },
+        body: options.body ? JSON.stringify(options.body) : undefined
+      });
+      if (!response.ok) {
+        let message = "Ocurrio un error al guardar los datos.";
+        try {
+          const data = await response.json();
+          if (data.error) message = data.error;
+        } catch (_error) {}
+        throw new Error(message);
+      }
+      if (response.status === 204) return null;
+      return response.json();
+    }
+
+    async function loadState() {
+      const data = await api("/api/state");
+      state.locales = Array.isArray(data.locales) ? data.locales : [];
+      state.tareas = Array.isArray(data.tareas) ? data.tareas : [];
+      state.incidentes = Array.isArray(data.incidentes) ? data.incidentes : [];
+      render();
+    }
+
+    function switchPanel(panelName) {
+      document.querySelectorAll(".nav button").forEach((button) => {
+        button.classList.toggle("active", button.dataset.panel === panelName);
+      });
+
+      document.querySelectorAll(".panel").forEach((panel) => {
+        panel.classList.toggle("active", panel.id === `panel-${panelName}`);
+      });
+
+      document.getElementById("page-title").textContent = pageMeta[panelName].title;
+      document.getElementById("page-copy").textContent = pageMeta[panelName].copy;
+    }
+
+    function render() {
+      renderStats();
+      renderSummary();
+      renderLocales();
+      renderTasks();
+      renderIncidents();
+    }
+
+    function renderStats() {
+      const occupied = state.locales.filter((item) => item.status === "ocupado").length;
+      const activeTasks = state.tareas.filter((item) => item.status !== "completada").length;
+      const openIncidents = state.incidentes.filter((item) => item.status !== "resuelto").length;
+
+      document.getElementById("stat-locales").textContent = String(state.locales.length);
+      document.getElementById("stat-ocupados").textContent = String(occupied);
+      document.getElementById("stat-tareas").textContent = String(activeTasks);
+      document.getElementById("stat-incidentes").textContent = String(openIncidents);
+      document.getElementById("locales-count-badge").textContent = `${state.locales.length} locales`;
+      document.getElementById("tareas-count-badge").textContent = `${state.tareas.length} tareas`;
+      document.getElementById("incidentes-count-badge").textContent = `${state.incidentes.length} incidentes`;
+    }
+
+    function renderSummary() {
+      if (!state.locales.length && !state.tareas.length && !state.incidentes.length) {
+        dashboardSummary.innerHTML = emptyState(
+          "Todavia no hay informacion cargada",
+          "Empieza por agregar un local, una tarea o un incidente. El dashboard se completa solo a medida que registres datos."
+        );
+        return;
+      }
+
+      const cards = [
+        {
+          title: "Ultimo local registrado",
+          text: state.locales[0] ? `${state.locales[0].number} - ${state.locales[0].name}` : "Aun no hay locales cargados."
+        },
+        {
+          title: "Ultima tarea registrada",
+          text: state.tareas[0] ? `${state.tareas[0].title} - ${capitalize(state.tareas[0].status)}` : "Aun no hay tareas cargadas."
+        },
+        {
+          title: "Ultimo incidente registrado",
+          text: state.incidentes[0] ? truncate(state.incidentes[0].description, 70) : "Aun no hay incidentes cargados."
+        }
+      ];
+
+      dashboardSummary.innerHTML = cards.map((item) => `
+        <div class="list-item">
+          <div>
+            <h4>${escapeHtml(item.title)}</h4>
+            <div class="meta">${escapeHtml(item.text)}</div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderLocales() {
+      if (!state.locales.length) {
+        document.getElementById("locales-count-badge").textContent = "0 locales";
+        localesList.innerHTML = emptyState("No hay locales registrados", "Agrega el primer local para iniciar la base comercial.");
+        return;
+      }
+
+      const filteredLocales = state.locales.filter((item) => {
+        const query = normalize(filters.locales.query);
+        const matchesQuery = !query || normalize([item.number, item.name, item.category, item.tenant, item.phone].join(" ")).includes(query);
+        const matchesStatus = filters.locales.status === "todos" || item.status === filters.locales.status;
+        return matchesQuery && matchesStatus;
+      });
+
+      document.getElementById("locales-count-badge").textContent = formatVisibleCount(filteredLocales.length, state.locales.length, "locales");
+
+      if (!filteredLocales.length) {
+        localesList.innerHTML = emptyState("No hay coincidencias para este filtro", "Prueba limpiando el buscador o cambiando el estado seleccionado.");
+        return;
+      }
+
+      localesList.innerHTML = filteredLocales.map((item) => `
+        <article class="list-item">
+          <div class="list-head">
+            <div>
+              <h4>${escapeHtml(item.number)} - ${escapeHtml(item.name)}</h4>
+              <div class="meta">
+                <span>${escapeHtml(item.category || "Sin rubro")}</span>
+                <span>${escapeHtml(item.tenant || "Sin responsable")}</span>
+                <span>${escapeHtml(item.phone || "Sin telefono")}</span>
+              </div>
+            </div>
+            ${renderBadge(item.status, "locale")}
+          </div>
+          <div class="actions">
+            <select data-type="locale" data-id="${item.id}">
+              <option value="disponible" ${item.status === "disponible" ? "selected" : ""}>Disponible</option>
+              <option value="ocupado" ${item.status === "ocupado" ? "selected" : ""}>Ocupado</option>
+              <option value="reservado" ${item.status === "reservado" ? "selected" : ""}>Reservado</option>
+            </select>
+            <button class="btn btn-secondary" type="button" data-edit="locale" data-id="${item.id}">Editar</button>
+            <button class="btn btn-secondary" type="button" data-delete="locale" data-id="${item.id}">Eliminar</button>
+          </div>
+        </article>
+      `).join("");
+
+      bindListActions();
+    }
+
+    function renderTasks() {
+      if (!state.tareas.length) {
+        document.getElementById("tareas-count-badge").textContent = "0 tareas";
+        tasksList.innerHTML = emptyState("No hay tareas registradas", "Agrega la primera tarea para empezar el seguimiento de mantencion.");
+        return;
+      }
+
+      const filteredTasks = state.tareas.filter((item) => {
+        const query = normalize(filters.tasks.query);
+        const matchesQuery = !query || normalize([item.title, item.area].join(" ")).includes(query);
+        const matchesStatus = filters.tasks.status === "todos" || item.status === filters.tasks.status;
+        return matchesQuery && matchesStatus;
+      });
+
+      document.getElementById("tareas-count-badge").textContent = formatVisibleCount(filteredTasks.length, state.tareas.length, "tareas");
+
+      if (!filteredTasks.length) {
+        tasksList.innerHTML = emptyState("No hay coincidencias para este filtro", "Prueba con otro texto o selecciona un estado distinto.");
+        return;
+      }
+
+      tasksList.innerHTML = filteredTasks.map((item) => `
+        <article class="list-item">
+          <div class="list-head">
+            <div>
+              <h4>${escapeHtml(item.title)}</h4>
+              <div class="meta">
+                <span>${escapeHtml(item.area || "Sin area")}</span>
+                <span>${escapeHtml(item.date || "Sin fecha")}</span>
+              </div>
+            </div>
+            ${renderBadge(item.status, "task")}
+          </div>
+          <div class="actions">
+            <select data-type="task" data-id="${item.id}">
+              <option value="pendiente" ${item.status === "pendiente" ? "selected" : ""}>Pendiente</option>
+              <option value="en progreso" ${item.status === "en progreso" ? "selected" : ""}>En progreso</option>
+              <option value="completada" ${item.status === "completada" ? "selected" : ""}>Completada</option>
+            </select>
+            <button class="btn btn-secondary" type="button" data-edit="task" data-id="${item.id}">Editar</button>
+            <button class="btn btn-secondary" type="button" data-delete="task" data-id="${item.id}">Eliminar</button>
+          </div>
+        </article>
+      `).join("");
+
+      bindListActions();
+    }
+
+    function renderIncidents() {
+      if (!state.incidentes.length) {
+        document.getElementById("incidentes-count-badge").textContent = "0 incidentes";
+        incidentsList.innerHTML = emptyState("No hay incidentes registrados", "Agrega el primer incidente cuando necesites dejar trazabilidad de un caso.");
+        return;
+      }
+
+      const filteredIncidents = state.incidentes.filter((item) => {
+        const query = normalize(filters.incidents.query);
+        const matchesQuery = !query || normalize([item.description, item.source].join(" ")).includes(query);
+        const matchesStatus = filters.incidents.status === "todos" || item.status === filters.incidents.status;
+        const matchesLevel = filters.incidents.level === "todos" || item.level === filters.incidents.level;
+        return matchesQuery && matchesStatus && matchesLevel;
+      });
+
+      document.getElementById("incidentes-count-badge").textContent = formatVisibleCount(filteredIncidents.length, state.incidentes.length, "incidentes");
+
+      if (!filteredIncidents.length) {
+        incidentsList.innerHTML = emptyState("No hay coincidencias para este filtro", "Ajusta texto, estado o nivel para volver a ver resultados.");
+        return;
+      }
+
+      incidentsList.innerHTML = filteredIncidents.map((item) => `
+        <article class="list-item">
+          <div class="list-head">
+            <div>
+              <h4>${escapeHtml(truncate(item.description, 90))}</h4>
+              <div class="meta">
+                <span>${escapeHtml(item.source || "Sin origen")}</span>
+                <span>${escapeHtml(item.date || "Sin fecha")}</span>
+                <span>Nivel ${escapeHtml(item.level)}</span>
+              </div>
+            </div>
+            ${renderBadge(item.status, "incident")}
+          </div>
+          <div class="actions">
+            <select data-type="incident" data-id="${item.id}">
+              <option value="abierto" ${item.status === "abierto" ? "selected" : ""}>Abierto</option>
+              <option value="en revision" ${item.status === "en revision" ? "selected" : ""}>En revision</option>
+              <option value="resuelto" ${item.status === "resuelto" ? "selected" : ""}>Resuelto</option>
+            </select>
+            <button class="btn btn-secondary" type="button" data-edit="incident" data-id="${item.id}">Editar</button>
+            <button class="btn btn-secondary" type="button" data-delete="incident" data-id="${item.id}">Eliminar</button>
+          </div>
+        </article>
+      `).join("");
+
+      bindListActions();
+    }
+
+    function bindListActions() {
+      document.querySelectorAll("[data-edit]").forEach((button) => {
+        button.onclick = () => startEdit(button.dataset.edit, button.dataset.id);
+      });
+
+      document.querySelectorAll("[data-delete]").forEach((button) => {
+        button.onclick = async () => {
+          const type = button.dataset.delete;
+          const id = button.dataset.id;
+          try {
+            if (type === "locale") await api(`/api/locales/${id}`, { method: "DELETE" });
+            if (type === "task") await api(`/api/tareas/${id}`, { method: "DELETE" });
+            if (type === "incident") await api(`/api/incidentes/${id}`, { method: "DELETE" });
+            if (editing[type] === id) resetFormMode(type);
+            await loadState();
+          } catch (error) {
+            alert(error.message);
+          }
+        };
+      });
+
+      document.querySelectorAll("select[data-type]").forEach((select) => {
+        select.onchange = async () => {
+          const type = select.dataset.type;
+          const id = select.dataset.id;
+          try {
+            if (type === "locale") await api(`/api/locales/${id}/status`, { method: "PATCH", body: { status: select.value } });
+            if (type === "task") await api(`/api/tareas/${id}/status`, { method: "PATCH", body: { status: select.value } });
+            if (type === "incident") await api(`/api/incidentes/${id}/status`, { method: "PATCH", body: { status: select.value } });
+            await loadState();
+          } catch (error) {
+            alert(error.message);
+          }
+        };
+      });
+    }
+
+    function startEdit(type, id) {
+      const item = findItem(type, id);
+      if (!item) return;
+
+      editing[type] = id;
+
+      if (type === "locale") {
+        const form = document.getElementById("locale-form");
+        form.number.value = item.number || "";
+        form.name.value = item.name || "";
+        form.tenant.value = item.tenant || "";
+        form.phone.value = item.phone || "";
+        form.category.value = item.category || "";
+        form.status.value = item.status || "disponible";
+        applyFormMode("locale", "Editar local", "Actualizar local", "Editando un local ya registrado.");
+        switchPanel("locales");
+        document.getElementById("locale-number").focus();
+      }
+
+      if (type === "task") {
+        const form = document.getElementById("task-form");
+        form.title.value = item.title || "";
+        form.area.value = item.area || "";
+        form.date.value = item.date || "";
+        form.status.value = item.status || "pendiente";
+        applyFormMode("task", "Editar tarea", "Actualizar tarea", "Editando una tarea existente.");
+        switchPanel("tareas");
+        document.getElementById("task-title").focus();
+      }
+
+      if (type === "incident") {
+        const form = document.getElementById("incident-form");
+        form.description.value = item.description || "";
+        form.level.value = item.level || "bajo";
+        form.status.value = item.status || "abierto";
+        form.date.value = item.date || "";
+        form.source.value = item.source || "";
+        applyFormMode("incident", "Editar incidente", "Actualizar incidente", "Editando un incidente existente.");
+        switchPanel("incidentes");
+        document.getElementById("incident-description").focus();
+      }
+    }
+
+    function resetFormMode(type) {
+      editing[type] = null;
+
+      if (type === "locale") {
+        const form = document.getElementById("locale-form");
+        form.reset();
+        form.status.value = "disponible";
+        applyDefaultFormMode("locale", "Agregar local", "Guardar local");
+      }
+
+      if (type === "task") {
+        const form = document.getElementById("task-form");
+        form.reset();
+        form.status.value = "pendiente";
+        applyDefaultFormMode("task", "Nueva tarea", "Guardar tarea");
+      }
+
+      if (type === "incident") {
+        const form = document.getElementById("incident-form");
+        form.reset();
+        form.level.value = "bajo";
+        form.status.value = "abierto";
+        applyDefaultFormMode("incident", "Nuevo incidente", "Guardar incidente");
+      }
+    }
+
+    function resetAllFormModes() {
+      resetFormMode("locale");
+      resetFormMode("task");
+      resetFormMode("incident");
+    }
+
+    function resetAllFilters() {
+      filters.locales.query = "";
+      filters.locales.status = "todos";
+      filters.tasks.query = "";
+      filters.tasks.status = "todos";
+      filters.incidents.query = "";
+      filters.incidents.status = "todos";
+      filters.incidents.level = "todos";
+
+      document.getElementById("locales-search").value = "";
+      document.getElementById("locales-filter-status").value = "todos";
+      document.getElementById("tasks-search").value = "";
+      document.getElementById("tasks-filter-status").value = "todos";
+      document.getElementById("incidents-search").value = "";
+      document.getElementById("incidents-filter-status").value = "todos";
+      document.getElementById("incidents-filter-level").value = "todos";
+    }
+
+    function applyFormMode(type, title, submitLabel, note) {
+      document.getElementById(`${type}-form-title`).textContent = title;
+      document.getElementById(`${type}-submit`).textContent = submitLabel;
+      document.getElementById(`${type}-cancel`).hidden = false;
+      document.getElementById(`${type}-form-note`).textContent = note;
+      document.getElementById(`${type}-form-note`).hidden = false;
+    }
+
+    function applyDefaultFormMode(type, title, submitLabel) {
+      document.getElementById(`${type}-form-title`).textContent = title;
+      document.getElementById(`${type}-submit`).textContent = submitLabel;
+      document.getElementById(`${type}-cancel`).hidden = true;
+      document.getElementById(`${type}-form-note`).hidden = true;
+    }
+
+    function findItem(type, id) {
+      if (type === "locale") return state.locales.find((item) => item.id === id);
+      if (type === "task") return state.tareas.find((item) => item.id === id);
+      if (type === "incident") return state.incidentes.find((item) => item.id === id);
+      return null;
+    }
+
+    function renderBadge(status, kind) {
+      const localeMap = {
+        disponible: ["badge-blue", "Disponible"],
+        ocupado: ["badge-green", "Ocupado"],
+        reservado: ["badge-yellow", "Reservado"]
+      };
+      const taskMap = {
+        pendiente: ["badge-yellow", "Pendiente"],
+        "en progreso": ["badge-blue", "En progreso"],
+        completada: ["badge-green", "Completada"]
+      };
+      const incidentMap = {
+        abierto: ["badge-red", "Abierto"],
+        "en revision": ["badge-yellow", "En revision"],
+        resuelto: ["badge-green", "Resuelto"]
+      };
+      const maps = { locale: localeMap, task: taskMap, incident: incidentMap };
+      const [styleClass, label] = maps[kind][status] || ["badge-blue", capitalize(status)];
+      return `<span class="badge ${styleClass}">${escapeHtml(label)}</span>`;
+    }
+
+    function formatVisibleCount(visible, total, label) {
+      return visible === total ? `${total} ${label}` : `${visible} de ${total} ${label}`;
+    }
+
+    function normalize(value) {
+      return String(value || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+
+    function emptyState(title, copy) {
+      return `
+        <div class="empty-state">
+          <strong>${escapeHtml(title)}</strong>
+          <p>${escapeHtml(copy)}</p>
+        </div>
+      `;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll("\"", "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function capitalize(value) {
+      if (!value) return "";
+      return value.charAt(0).toUpperCase() + value.slice(1);
+    }
+
+    function truncate(value, length) {
+      if (!value) return "";
+      return value.length > length ? `${value.slice(0, length - 3)}...` : value;
+    }
+
+    resetAllFormModes();
+    resetAllFilters();
+    loadState().catch((error) => {
+      dashboardSummary.innerHTML = emptyState("No se pudo conectar la app", "Inicia el servidor local antes de usar el panel.");
+      console.error(error);
+    });
+  </script>
+
+    function switchPanel(panelName) {
+      document.querySelectorAll(".nav button").forEach((button) => {
+        button.classList.toggle("active", button.dataset.panel === panelName);
+      });
+
+      document.querySelectorAll(".panel").forEach((panel) => {
+        panel.classList.toggle("active", panel.id === `panel-${panelName}`);
+      });
+
+      document.getElementById("page-title").textContent = pageMeta[panelName].title;
+      document.getElementById("page-copy").textContent = pageMeta[panelName].copy;
+    }
+
+    function render() {
+      renderStats();
+      renderSummary();
+      renderLocales();
+      renderTasks();
+      renderIncidents();
+    }
+
+    function renderStats() {
+      const occupied = state.locales.filter((item) => item.status === "ocupado").length;
+      const activeTasks = state.tareas.filter((item) => item.status !== "completada").length;
+      const openIncidents = state.incidentes.filter((item) => item.status !== "resuelto").length;
+
+      document.getElementById("stat-locales").textContent = String(state.locales.length);
+      document.getElementById("stat-ocupados").textContent = String(occupied);
+      document.getElementById("stat-tareas").textContent = String(activeTasks);
+      document.getElementById("stat-incidentes").textContent = String(openIncidents);
+      document.getElementById("locales-count-badge").textContent = `${state.locales.length} locales`;
+      document.getElementById("tareas-count-badge").textContent = `${state.tareas.length} tareas`;
+      document.getElementById("incidentes-count-badge").textContent = `${state.incidentes.length} incidentes`;
+    }
+
+    function renderSummary() {
+      if (!state.locales.length && !state.tareas.length && !state.incidentes.length) {
+        dashboardSummary.innerHTML = emptyState(
+          "Todavia no hay informacion cargada",
+          "Empieza por agregar un local, una tarea o un incidente. El dashboard se completa solo a medida que registres datos."
+        );
+        return;
+      }
+
+      const cards = [
+        {
+          title: "Ultimo local registrado",
+          text: state.locales[0] ? `${state.locales[0].number} - ${state.locales[0].name}` : "Aun no hay locales cargados."
+        },
+        {
+          title: "Ultima tarea registrada",
+          text: state.tareas[0] ? `${state.tareas[0].title} - ${capitalize(state.tareas[0].status)}` : "Aun no hay tareas cargadas."
+        },
+        {
+          title: "Ultimo incidente registrado",
+          text: state.incidentes[0] ? truncate(state.incidentes[0].description, 70) : "Aun no hay incidentes cargados."
+        }
+      ];
+
+      dashboardSummary.innerHTML = cards.map((item) => `
+        <div class="list-item">
+          <div>
+            <h4>${escapeHtml(item.title)}</h4>
+            <div class="meta">${escapeHtml(item.text)}</div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderLocales() {
+      if (!state.locales.length) {
+        document.getElementById("locales-count-badge").textContent = "0 locales";
+        localesList.innerHTML = emptyState(
+          "No hay locales registrados",
+          "Agrega el primer local para iniciar la base comercial."
+        );
+        return;
+      }
+
+      const filteredLocales = state.locales.filter((item) => {
+        const query = normalize(filters.locales.query);
+        const matchesQuery = !query || normalize([
+          item.number,
+          item.name,
+          item.category,
+          item.tenant,
+          item.phone
+        ].join(" ")).includes(query);
+        const matchesStatus = filters.locales.status === "todos" || item.status === filters.locales.status;
+        return matchesQuery && matchesStatus;
+      });
+
+      document.getElementById("locales-count-badge").textContent = formatVisibleCount(filteredLocales.length, state.locales.length, "locales");
+
+      if (!filteredLocales.length) {
+        localesList.innerHTML = emptyState(
+          "No hay coincidencias para este filtro",
+          "Prueba limpiando el buscador o cambiando el estado seleccionado."
+        );
+        return;
+      }
+
+      localesList.innerHTML = filteredLocales.map((item) => `
+        <article class="list-item">
+          <div class="list-head">
+            <div>
+              <h4>${escapeHtml(item.number)} - ${escapeHtml(item.name)}</h4>
+              <div class="meta">
+                <span>${escapeHtml(item.category || "Sin rubro")}</span>
+                <span>${escapeHtml(item.tenant || "Sin responsable")}</span>
+                <span>${escapeHtml(item.phone || "Sin telefono")}</span>
+              </div>
+            </div>
+            ${renderBadge(item.status, "locale")}
+          </div>
+          <div class="actions">
+            <select data-type="locale" data-id="${item.id}">
+              <option value="disponible" ${item.status === "disponible" ? "selected" : ""}>Disponible</option>
+              <option value="ocupado" ${item.status === "ocupado" ? "selected" : ""}>Ocupado</option>
+              <option value="reservado" ${item.status === "reservado" ? "selected" : ""}>Reservado</option>
+            </select>
+            <button class="btn btn-secondary" type="button" data-edit="locale" data-id="${item.id}">Editar</button>
+            <button class="btn btn-secondary" type="button" data-delete="locale" data-id="${item.id}">Eliminar</button>
+          </div>
+        </article>
+      `).join("");
+
+      bindListActions();
+    }
+
+    function renderTasks() {
+      if (!state.tareas.length) {
+        document.getElementById("tareas-count-badge").textContent = "0 tareas";
+        tasksList.innerHTML = emptyState(
+          "No hay tareas registradas",
+          "Agrega la primera tarea para empezar el seguimiento de mantencion."
+        );
+        return;
+      }
+
+      const filteredTasks = state.tareas.filter((item) => {
+        const query = normalize(filters.tasks.query);
+        const matchesQuery = !query || normalize([item.title, item.area].join(" ")).includes(query);
+        const matchesStatus = filters.tasks.status === "todos" || item.status === filters.tasks.status;
+        return matchesQuery && matchesStatus;
+      });
+
+      document.getElementById("tareas-count-badge").textContent = formatVisibleCount(filteredTasks.length, state.tareas.length, "tareas");
+
+      if (!filteredTasks.length) {
+        tasksList.innerHTML = emptyState(
+          "No hay coincidencias para este filtro",
+          "Prueba con otro texto o selecciona un estado distinto."
+        );
+        return;
+      }
+
+      tasksList.innerHTML = filteredTasks.map((item) => `
+        <article class="list-item">
+          <div class="list-head">
+            <div>
+              <h4>${escapeHtml(item.title)}</h4>
+              <div class="meta">
+                <span>${escapeHtml(item.area || "Sin area")}</span>
+                <span>${escapeHtml(item.date || "Sin fecha")}</span>
+              </div>
+            </div>
+            ${renderBadge(item.status, "task")}
+          </div>
+          <div class="actions">
+            <select data-type="task" data-id="${item.id}">
+              <option value="pendiente" ${item.status === "pendiente" ? "selected" : ""}>Pendiente</option>
+              <option value="en progreso" ${item.status === "en progreso" ? "selected" : ""}>En progreso</option>
+              <option value="completada" ${item.status === "completada" ? "selected" : ""}>Completada</option>
+            </select>
+            <button class="btn btn-secondary" type="button" data-edit="task" data-id="${item.id}">Editar</button>
+            <button class="btn btn-secondary" type="button" data-delete="task" data-id="${item.id}">Eliminar</button>
+          </div>
+        </article>
+      `).join("");
+
+      bindListActions();
+    }
+
+    function renderIncidents() {
+      if (!state.incidentes.length) {
+        document.getElementById("incidentes-count-badge").textContent = "0 incidentes";
+        incidentsList.innerHTML = emptyState(
+          "No hay incidentes registrados",
+          "Agrega el primer incidente cuando necesites dejar trazabilidad de un caso."
+        );
+        return;
+      }
+
+      const filteredIncidents = state.incidentes.filter((item) => {
+        const query = normalize(filters.incidents.query);
+        const matchesQuery = !query || normalize([item.description, item.source].join(" ")).includes(query);
+        const matchesStatus = filters.incidents.status === "todos" || item.status === filters.incidents.status;
+        const matchesLevel = filters.incidents.level === "todos" || item.level === filters.incidents.level;
+        return matchesQuery && matchesStatus && matchesLevel;
+      });
+
+      document.getElementById("incidentes-count-badge").textContent = formatVisibleCount(filteredIncidents.length, state.incidentes.length, "incidentes");
+
+      if (!filteredIncidents.length) {
+        incidentsList.innerHTML = emptyState(
+          "No hay coincidencias para este filtro",
+          "Ajusta texto, estado o nivel para volver a ver resultados."
+        );
+        return;
+      }
+
+      incidentsList.innerHTML = filteredIncidents.map((item) => `
+        <article class="list-item">
+          <div class="list-head">
+            <div>
+              <h4>${escapeHtml(truncate(item.description, 90))}</h4>
+              <div class="meta">
+                <span>${escapeHtml(item.source || "Sin origen")}</span>
+                <span>${escapeHtml(item.date || "Sin fecha")}</span>
+                <span>Nivel ${escapeHtml(item.level)}</span>
+              </div>
+            </div>
+            ${renderBadge(item.status, "incident")}
+          </div>
+          <div class="actions">
+            <select data-type="incident" data-id="${item.id}">
+              <option value="abierto" ${item.status === "abierto" ? "selected" : ""}>Abierto</option>
+              <option value="en revision" ${item.status === "en revision" ? "selected" : ""}>En revision</option>
+              <option value="resuelto" ${item.status === "resuelto" ? "selected" : ""}>Resuelto</option>
+            </select>
+            <button class="btn btn-secondary" type="button" data-edit="incident" data-id="${item.id}">Editar</button>
+            <button class="btn btn-secondary" type="button" data-delete="incident" data-id="${item.id}">Eliminar</button>
+          </div>
+        </article>
+      `).join("");
+
+      bindListActions();
+    }
+
+    function bindListActions() {
+      document.querySelectorAll("[data-edit]").forEach((button) => {
+        button.onclick = () => startEdit(button.dataset.edit, button.dataset.id);
+      });
+
+      document.querySelectorAll("[data-delete]").forEach((button) => {
+        button.onclick = () => {
+          const type = button.dataset.delete;
+          const id = button.dataset.id;
+
+          if (type === "locale") state.locales = state.locales.filter((item) => item.id !== id);
+          if (type === "task") state.tareas = state.tareas.filter((item) => item.id !== id);
+          if (type === "incident") state.incidentes = state.incidentes.filter((item) => item.id !== id);
+          if (editing[type] === id) resetFormMode(type);
+
+          saveAndRender();
+        };
+      });
+
+      document.querySelectorAll("select[data-type]").forEach((select) => {
+        select.onchange = () => {
+          const type = select.dataset.type;
+          const id = select.dataset.id;
+          const item = findItem(type, id);
+
+          if (!item) return;
+          item.status = select.value;
+          saveAndRender();
+        };
+      });
+    }
+
+    function startEdit(type, id) {
+      const item = findItem(type, id);
+      if (!item) return;
+
+      editing[type] = id;
+
+      if (type === "locale") {
+        const form = document.getElementById("locale-form");
+        form.number.value = item.number || "";
+        form.name.value = item.name || "";
+        form.tenant.value = item.tenant || "";
+        form.phone.value = item.phone || "";
+        form.category.value = item.category || "";
+        form.status.value = item.status || "disponible";
+        applyFormMode("locale", "Editar local", "Actualizar local", "Editando un local ya registrado.");
+        switchPanel("locales");
+        document.getElementById("locale-number").focus();
+      }
+
+      if (type === "task") {
+        const form = document.getElementById("task-form");
+        form.title.value = item.title || "";
+        form.area.value = item.area || "";
+        form.date.value = item.date || "";
+        form.status.value = item.status || "pendiente";
+        applyFormMode("task", "Editar tarea", "Actualizar tarea", "Editando una tarea existente.");
+        switchPanel("tareas");
+        document.getElementById("task-title").focus();
+      }
+
+      if (type === "incident") {
+        const form = document.getElementById("incident-form");
+        form.description.value = item.description || "";
+        form.level.value = item.level || "bajo";
+        form.status.value = item.status || "abierto";
+        form.date.value = item.date || "";
+        form.source.value = item.source || "";
+        applyFormMode("incident", "Editar incidente", "Actualizar incidente", "Editando un incidente existente.");
+        switchPanel("incidentes");
+        document.getElementById("incident-description").focus();
+      }
+    }
+
+    function resetFormMode(type) {
+      editing[type] = null;
+
+      if (type === "locale") {
+        const form = document.getElementById("locale-form");
+        form.reset();
+        form.status.value = "disponible";
+        applyDefaultFormMode("locale", "Agregar local", "Guardar local");
+      }
+
+      if (type === "task") {
+        const form = document.getElementById("task-form");
+        form.reset();
+        form.status.value = "pendiente";
+        applyDefaultFormMode("task", "Nueva tarea", "Guardar tarea");
+      }
+
+      if (type === "incident") {
+        const form = document.getElementById("incident-form");
+        form.reset();
+        form.level.value = "bajo";
+        form.status.value = "abierto";
+        applyDefaultFormMode("incident", "Nuevo incidente", "Guardar incidente");
+      }
+    }
+
+    function resetAllFormModes() {
+      resetFormMode("locale");
+      resetFormMode("task");
+      resetFormMode("incident");
+    }
+
+    function resetAllFilters() {
+      filters.locales.query = "";
+      filters.locales.status = "todos";
+      filters.tasks.query = "";
+      filters.tasks.status = "todos";
+      filters.incidents.query = "";
+      filters.incidents.status = "todos";
+      filters.incidents.level = "todos";
+
+      document.getElementById("locales-search").value = "";
+      document.getElementById("locales-filter-status").value = "todos";
+      document.getElementById("tasks-search").value = "";
+      document.getElementById("tasks-filter-status").value = "todos";
+      document.getElementById("incidents-search").value = "";
+      document.getElementById("incidents-filter-status").value = "todos";
+      document.getElementById("incidents-filter-level").value = "todos";
+    }
+
+    function applyFormMode(type, title, submitLabel, note) {
+      document.getElementById(`${type}-form-title`).textContent = title;
+      document.getElementById(`${type}-submit`).textContent = submitLabel;
+      document.getElementById(`${type}-cancel`).hidden = false;
+      document.getElementById(`${type}-form-note`).textContent = note;
+      document.getElementById(`${type}-form-note`).hidden = false;
+    }
+
+    function applyDefaultFormMode(type, title, submitLabel) {
+      document.getElementById(`${type}-form-title`).textContent = title;
+      document.getElementById(`${type}-submit`).textContent = submitLabel;
+      document.getElementById(`${type}-cancel`).hidden = true;
+      document.getElementById(`${type}-form-note`).hidden = true;
+    }
+
+    function findItem(type, id) {
+      if (type === "locale") return state.locales.find((item) => item.id === id);
+      if (type === "task") return state.tareas.find((item) => item.id === id);
+      if (type === "incident") return state.incidentes.find((item) => item.id === id);
+      return null;
+    }
+
+    function renderBadge(status, kind) {
+      const localeMap = {
+        disponible: ["badge-blue", "Disponible"],
+        ocupado: ["badge-green", "Ocupado"],
+        reservado: ["badge-yellow", "Reservado"]
+      };
+      const taskMap = {
+        pendiente: ["badge-yellow", "Pendiente"],
+        "en progreso": ["badge-blue", "En progreso"],
+        completada: ["badge-green", "Completada"]
+      };
+      const incidentMap = {
+        abierto: ["badge-red", "Abierto"],
+        "en revision": ["badge-yellow", "En revision"],
+        resuelto: ["badge-green", "Resuelto"]
+      };
+
+      const maps = {
+        locale: localeMap,
+        task: taskMap,
+        incident: incidentMap
+      };
+
+      const [styleClass, label] = maps[kind][status] || ["badge-blue", capitalize(status)];
+      return `<span class="badge ${styleClass}">${escapeHtml(label)}</span>`;
+    }
+
+    function formatVisibleCount(visible, total, label) {
+      return visible === total ? `${total} ${label}` : `${visible} de ${total} ${label}`;
+    }
+
+    function normalize(value) {
+      return String(value || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+    }
+
+    function emptyState(title, copy) {
+      return `
+        <div class="empty-state">
+          <strong>${escapeHtml(title)}</strong>
+          <p>${escapeHtml(copy)}</p>
+        </div>
+      `;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll("\"", "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function capitalize(value) {
+      if (!value) return "";
+      return value.charAt(0).toUpperCase() + value.slice(1);
+    }
+
+    function truncate(value, length) {
+      if (!value) return "";
+      return value.length > length ? `${value.slice(0, length - 3)}...` : value;
+    }
+
+    resetAllFormModes();
+    resetAllFilters();
+    render();
+  </script>
+</body>
+</html>

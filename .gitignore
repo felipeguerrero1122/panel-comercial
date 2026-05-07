@@ -1,0 +1,6 @@
+node_modules/
+panel-comercial.db
+panel-comercial.db-shm
+panel-comercial.db-wal
+server.log
+server-error.log
