@@ -441,6 +441,32 @@
       line-height: 1.55;
     }
 
+    .status-banner {
+      margin-bottom: 18px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: #ffffff;
+      color: var(--muted);
+      display: none;
+    }
+
+    .status-banner.visible {
+      display: block;
+    }
+
+    .status-banner.error {
+      background: #fff1f2;
+      border-color: #fecdd3;
+      color: #9f1239;
+    }
+
+    .status-banner.ok {
+      background: #ecfdf5;
+      border-color: #bbf7d0;
+      color: #166534;
+    }
+
     [hidden] {
       display: none !important;
     }
@@ -505,6 +531,8 @@
     </aside>
 
     <main class="content">
+      <div class="status-banner" id="status-banner"></div>
+
       <header class="topbar">
         <div>
           <h2 id="page-title">Dashboard</h2>
@@ -921,6 +949,7 @@
     const localesList = document.getElementById("locales-list");
     const tasksList = document.getElementById("tasks-list");
     const incidentsList = document.getElementById("incidents-list");
+    const statusBanner = document.getElementById("status-banner");
 
     document.querySelectorAll(".nav button").forEach((button) => {
       button.addEventListener("click", () => switchPanel(button.dataset.panel));
@@ -1086,7 +1115,13 @@
       state.locales = Array.isArray(data.locales) ? data.locales : [];
       state.tareas = Array.isArray(data.tareas) ? data.tareas : [];
       state.incidentes = Array.isArray(data.incidentes) ? data.incidentes : [];
+      setStatusBanner("ok", "Servidor conectado. Los cambios se estan guardando en la base de datos local.");
       render();
+    }
+
+    function setStatusBanner(type, text) {
+      statusBanner.className = `status-banner visible ${type}`;
+      statusBanner.textContent = text;
     }
 
     function switchPanel(panelName) {
@@ -1517,6 +1552,7 @@
     resetAllFormModes();
     resetAllFilters();
     loadState().catch((error) => {
+      setStatusBanner("error", "No hay conexion con el servidor local. Abre iniciar-panel.bat o ejecuta npm start para que la app pueda guardar datos.");
       dashboardSummary.innerHTML = emptyState("No se pudo conectar la app", "Inicia el servidor local antes de usar el panel.");
       console.error(error);
     });
