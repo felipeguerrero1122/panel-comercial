@@ -2,15 +2,11 @@ services:
   - type: web
     name: panel-comercial
     runtime: node
-    plan: starter
+    plan: free
     buildCommand: npm install
     startCommand: npm start
     envVars:
       - key: NODE_VERSION
         value: 22.22.0
-      - key: DATA_DIR
-        value: /var/data
-    disk:
-      name: panel-comercial-data
-      mountPath: /var/data
-      sizeGB: 1
+      - key: NODE_ENV
+        value: production

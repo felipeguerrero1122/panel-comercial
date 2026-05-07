@@ -36,20 +36,21 @@ http://localhost:3000
 
 ## Publicarla sin depender de tu PC
 
-Este proyecto ya quedo preparado para desplegarse en Render con:
+Este proyecto ya quedo preparado para Render usando:
 
-- `render.yaml`
-- `DATA_DIR` para guardar la base SQLite fuera del codigo
-- disco persistente en `/var/data`
+- Web Service `Node`
+- Base de datos `Postgres`
+- Variable `DATABASE_URL` entregada por Render
 
 Pasos:
 
 1. Sube esta carpeta a GitHub.
-2. En Render crea un nuevo servicio desde ese repositorio.
-3. Render detectara `render.yaml`.
-4. Cuando termine el deploy, la app quedara disponible en una URL publica.
+2. En Render crea primero una base `Postgres`.
+3. Luego crea un `Web Service` desde este repositorio.
+4. En el servicio web agrega la variable `DATABASE_URL` con la `Internal Database URL` de Postgres.
+5. Cuando termine el deploy, la app quedara disponible en una URL publica.
 
 Nota:
 
-- Render indica que los discos persistentes solo estan disponibles en servicios pagos.
-- Sin disco persistente, SQLite perderia datos en cada redeploy o reinicio.
+- En local la app sigue usando SQLite.
+- En Render usara Postgres automaticamente cuando exista `DATABASE_URL`.
