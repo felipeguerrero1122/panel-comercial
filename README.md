@@ -30,7 +30,7 @@ http://localhost:3000
 
 ## Archivos importantes
 
-- `INDEX.html`: interfaz
+- `index.html`: interfaz
 - `server.js`: servidor Express y API
 - `panel-comercial.db`: base de datos SQLite, se crea automaticamente al iniciar
 
@@ -54,3 +54,4 @@ Nota:
 
 - En local la app sigue usando SQLite.
 - En Render usara Postgres automaticamente cuando exista `DATABASE_URL`.
+

@@ -404,7 +404,7 @@ app.delete("/api/incidentes/:id", async (req, res) => {
 });
 
 app.get("/", (_req, res) => {
-  res.sendFile(path.join(__dirname, "INDEX.html"));
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
 store.init().then(() => {
@@ -415,3 +415,4 @@ store.init().then(() => {
   console.error("No se pudo iniciar la base de datos:", error);
   process.exit(1);
 });
+
