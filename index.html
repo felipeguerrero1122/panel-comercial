@@ -54,6 +54,12 @@
       display: flex;
       flex-direction: column;
       gap: 24px;
+      position: relative;
+      z-index: 20;
+    }
+
+    .sidebar-overlay {
+      display: none;
     }
 
     .brand,
@@ -126,6 +132,12 @@
       margin-bottom: 22px;
     }
 
+    .topbar-main {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
     .topbar h2 {
       margin: 0;
       font-size: 34px;
@@ -182,6 +194,42 @@
     .btn-danger {
       background: var(--danger-soft);
       color: var(--danger);
+    }
+
+    .menu-toggle,
+    .menu-close {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      cursor: pointer;
+    }
+
+    .menu-toggle {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      background: #10203a;
+      border-color: rgba(147, 197, 253, 0.18);
+      flex: 0 0 auto;
+    }
+
+    .menu-toggle svg,
+    .menu-close svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .menu-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
     }
 
     .hero,
@@ -527,12 +575,58 @@
         grid-template-columns: 1fr;
       }
 
+      body.menu-open {
+        overflow: hidden;
+      }
+
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: min(82vw, 320px);
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+        overflow-y: auto;
+        box-shadow: 0 24px 48px rgba(15, 23, 42, 0.32);
+      }
+
+      .layout.menu-open .sidebar {
+        transform: translateX(0);
+      }
+
+      .sidebar-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.44);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+        z-index: 15;
+      }
+
+      .layout.menu-open .sidebar-overlay {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
       .content {
         padding: 20px;
+        padding-top: 84px;
       }
 
       .topbar {
         flex-direction: column;
+      }
+
+      .topbar-main {
+        width: 100%;
+      }
+
+      .menu-toggle,
+      .menu-close {
+        display: inline-flex;
       }
     }
 
@@ -550,6 +644,11 @@
 <body>
   <div class="layout">
     <aside class="sidebar">
+      <button class="menu-close" id="menu-close" type="button" aria-label="Cerrar menu">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
       <div class="brand">
         <span class="eyebrow">Gestión comercial</span>
         <h1>Panel Comercial</h1>
@@ -568,14 +667,22 @@
         <p>Centraliza la gestión comercial y operativa del recinto en un solo panel.</p>
       </div>
     </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
     <main class="content">
       <div class="status-banner" id="status-banner"></div>
 
       <header class="topbar">
-        <div>
-          <h2 id="page-title">Dashboard</h2>
-          <p id="page-copy">Administra locales, mantenimiento e incidentes desde un solo lugar.</p>
+        <div class="topbar-main">
+          <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Abrir menu">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 7H20M4 12H20M4 17H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <div>
+            <h2 id="page-title">Dashboard</h2>
+            <p id="page-copy">Administra locales, mantenimiento e incidentes desde un solo lugar.</p>
+          </div>
         </div>
 
         <div class="toolbar">
@@ -937,6 +1044,10 @@
     const tasksList = document.getElementById("tasks-list");
     const incidentsList = document.getElementById("incidents-list");
     const statusBanner = document.getElementById("status-banner");
+    const layout = document.querySelector(".layout");
+    const menuToggle = document.getElementById("menu-toggle");
+    const menuClose = document.getElementById("menu-close");
+    const sidebarOverlay = document.getElementById("sidebar-overlay");
 
     document.querySelectorAll(".nav button").forEach((button) => {
       button.addEventListener("click", () => {
@@ -944,7 +1055,17 @@
         if (button.dataset.panel === "tareas") moduleViews.tareas = "list";
         if (button.dataset.panel === "incidentes") moduleViews.incidentes = "list";
         switchPanel(button.dataset.panel);
+        closeMenu();
       });
+    });
+
+    menuToggle.addEventListener("click", () => {
+      setMenuOpen(!layout.classList.contains("menu-open"));
+    });
+    menuClose.addEventListener("click", closeMenu);
+    sidebarOverlay.addEventListener("click", closeMenu);
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 880) closeMenu();
     });
 
     document.getElementById("locale-cancel").addEventListener("click", () => resetFormMode("locale"));
@@ -1124,6 +1245,15 @@
     function setStatusBanner(type, text) {
       statusBanner.className = `status-banner visible ${type}`;
       statusBanner.textContent = text;
+    }
+
+    function setMenuOpen(isOpen) {
+      layout.classList.toggle("menu-open", isOpen);
+      document.body.classList.toggle("menu-open", isOpen);
+    }
+
+    function closeMenu() {
+      setMenuOpen(false);
     }
 
     function switchPanel(panelName) {
