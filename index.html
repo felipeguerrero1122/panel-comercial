@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Panel Comercial Base</title>
+  <title>Panel Comercial</title>
   <style>
     :root {
       --bg: #eef3f8;
@@ -511,9 +511,9 @@
   <div class="layout">
     <aside class="sidebar">
       <div class="brand">
-        <span class="eyebrow">Base editable</span>
+        <span class="eyebrow">Gestión comercial</span>
         <h1>Panel Comercial</h1>
-        <p>Version en blanco para entregar, cargar informacion real y seguir ampliando el proyecto sin depender de React ni build tools.</p>
+        <p>Plataforma de gestión para locales, mantenimiento e incidentes.</p>
       </div>
 
       <nav class="nav" aria-label="Navegacion principal">
@@ -521,12 +521,11 @@
         <button data-panel="locales">Locales</button>
         <button data-panel="tareas">Mantenimiento</button>
         <button data-panel="incidentes">Incidentes</button>
-        <button data-panel="roadmap">Proximo desarrollo</button>
       </nav>
 
       <div class="sidebar-note">
-        <span class="eyebrow">Listo para usar</span>
-        <p>Los datos quedan guardados en este navegador. Puedes cargar informacion real ahora mismo y luego seguir extendiendo el archivo con nuevos modulos.</p>
+        <span class="eyebrow">Operación activa</span>
+        <p>Centraliza la gestión comercial y operativa del recinto en un solo panel.</p>
       </div>
     </aside>
 
@@ -536,7 +535,7 @@
       <header class="topbar">
         <div>
           <h2 id="page-title">Dashboard</h2>
-          <p id="page-copy">Una base limpia para administrar locales, tareas e incidentes. Todo parte vacio y se completa desde los formularios de cada modulo.</p>
+          <p id="page-copy">Administra locales, mantenimiento e incidentes desde un solo lugar.</p>
         </div>
 
         <div class="toolbar">
@@ -547,9 +546,9 @@
 
       <section class="panel active" id="panel-dashboard">
         <div class="hero">
-          <span class="eyebrow" style="color: #1d4ed8;">Proyecto base</span>
-          <h3>App vacia, ordenada y preparada para crecer</h3>
-          <p>Esta version no trae datos de ejemplo. Sirve como maqueta funcional para una persona externa y como punto de partida para agregar nuevos flujos como contratos, cobranza, usuarios, reportes o recordatorios.</p>
+          <span class="eyebrow" style="color: #1d4ed8;">Panel de control</span>
+          <h3>Gestión comercial y operativa</h3>
+          <p>Visualiza el estado general de locales, tareas e incidentes con acceso rápido a la información clave.</p>
         </div>
 
         <div class="grid stats">
@@ -598,20 +597,20 @@
           </article>
 
           <article class="card">
-            <h3 class="section-title">Que ya puedes hacer</h3>
-            <p class="section-subtitle">La base queda util desde el primer dia.</p>
+            <h3 class="section-title">Módulos disponibles</h3>
+            <p class="section-subtitle">Acceso centralizado a los principales frentes de gestión.</p>
             <div class="roadmap">
               <div class="roadmap-item">
-                <strong>Registrar locales</strong>
-                <span class="helper">Numero, nombre, rubro, contacto y estado.</span>
+                <strong>Locales</strong>
+                <span class="helper">Control de ocupación, contacto comercial y estado de cada unidad.</span>
               </div>
               <div class="roadmap-item">
-                <strong>Editar registros</strong>
-                <span class="helper">Corregir datos ya cargados sin borrar y volver a crear.</span>
+                <strong>Mantenimiento</strong>
+                <span class="helper">Seguimiento de tareas operativas, pendientes y trabajos realizados.</span>
               </div>
               <div class="roadmap-item">
-                <strong>Controlar incidentes y mantenimiento</strong>
-                <span class="helper">Actualizar estado, eliminar o exportar informacion.</span>
+                <strong>Incidentes</strong>
+                <span class="helper">Registro y seguimiento de eventos que requieren atención o resolución.</span>
               </div>
             </div>
           </article>
@@ -665,7 +664,7 @@
               <div class="actions">
                 <button class="btn btn-primary" id="locale-submit" type="submit">Guardar local</button>
                 <button class="btn btn-secondary" id="locale-cancel" type="button" hidden>Cancelar edicion</button>
-                <span class="hint">Se almacena en el navegador automaticamente.</span>
+                <span class="hint">Registra y actualiza la información comercial del local.</span>
               </div>
             </form>
           </article>
@@ -729,7 +728,7 @@
               <div class="actions">
                 <button class="btn btn-primary" id="task-submit" type="submit">Guardar tarea</button>
                 <button class="btn btn-secondary" id="task-cancel" type="button" hidden>Cancelar edicion</button>
-                <span class="hint">Ideal para empezar con pendientes reales del proyecto.</span>
+                <span class="hint">Administra pendientes y trabajos operativos desde este módulo.</span>
               </div>
             </form>
           </article>
@@ -811,7 +810,7 @@
             <div class="status-row">
               <div>
                 <h3 class="section-title">Incidentes registrados</h3>
-                <p class="section-subtitle">Base simple para no perder trazabilidad operativa.</p>
+                <p class="section-subtitle">Registro operativo con seguimiento por estado y nivel.</p>
               </div>
               <span class="badge badge-blue" id="incidentes-count-badge">0 incidentes</span>
             </div>
@@ -831,75 +830,10 @@
                 <option value="medio">Medio</option>
                 <option value="alto">Alto</option>
               </select>
-              <div class="hint" style="align-self:center;">Combina estado y nivel para acotar resultados.</div>
+              <div class="hint" style="align-self:center;">Filtra por estado y nivel para ubicar casos específicos.</div>
             </div>
             <div class="list" id="incidents-list"></div>
           </article>
-        </div>
-      </section>
-
-      <section class="panel" id="panel-roadmap">
-        <div class="grid three-columns">
-          <article class="card">
-            <h3 class="section-title">Modulos sugeridos</h3>
-            <p class="section-subtitle">Siguientes piezas naturales para continuar el desarrollo.</p>
-            <div class="roadmap">
-              <div class="roadmap-item">
-                <strong>Contratos y vencimientos</strong>
-                <span class="helper">Fechas de renovacion, alertas y documentos.</span>
-              </div>
-              <div class="roadmap-item">
-                <strong>Cobranza</strong>
-                <span class="helper">Canon, gastos comunes, pagos pendientes y estado mensual.</span>
-              </div>
-              <div class="roadmap-item">
-                <strong>Reportes</strong>
-                <span class="helper">Exportaciones, indicadores y panel de ocupacion historica.</span>
-              </div>
-            </div>
-          </article>
-
-          <article class="card">
-            <h3 class="section-title">Ideas de experiencia</h3>
-            <p class="section-subtitle">Mejoras utiles sin cambiar la base del proyecto.</p>
-            <div class="roadmap">
-              <div class="roadmap-item">
-                <strong>Buscador y filtros</strong>
-                <span class="helper">Por estado, rubro, nivel o texto libre.</span>
-              </div>
-              <div class="roadmap-item">
-                <strong>Login o perfiles</strong>
-                <span class="helper">Si luego la persona externa necesita acceso restringido.</span>
-              </div>
-              <div class="roadmap-item">
-                <strong>Adjuntos o evidencias</strong>
-                <span class="helper">Para incidentes o mantenimiento con respaldo visual.</span>
-              </div>
-            </div>
-          </article>
-
-          <article class="card">
-            <h3 class="section-title">Base tecnica</h3>
-            <p class="section-subtitle">Quedo pensada para crecer sin rehacer todo.</p>
-            <div class="roadmap">
-              <div class="roadmap-item">
-                <strong>Datos persistentes</strong>
-                <span class="helper">Hoy usa localStorage para pruebas y uso liviano.</span>
-              </div>
-              <div class="roadmap-item">
-                <strong>Sin dependencias</strong>
-                <span class="helper">Abre directo en navegador como archivo local.</span>
-              </div>
-              <div class="roadmap-item">
-                <strong>Escalable</strong>
-                <span class="helper">Cuando quieras, esto se puede migrar a React o backend real.</span>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <div class="footer-note">
-          Esta base esta pensada para entrega temprana. Si quieres, en el siguiente paso puedo seguir con el punto 2 del orden: buscador y filtros.
         </div>
       </section>
     </main>
@@ -909,23 +843,19 @@
     const pageMeta = {
       dashboard: {
         title: "Dashboard",
-        copy: "Una base limpia para administrar locales, tareas e incidentes. Todo parte vacio y se completa desde los formularios de cada modulo."
+        copy: "Administra locales, mantenimiento e incidentes desde un solo lugar."
       },
       locales: {
         title: "Locales",
-        copy: "Carga los locales reales del proyecto y cambia su estado cuando quieras."
+        copy: "Consulta, registra y actualiza la información de cada local."
       },
       tareas: {
         title: "Mantenimiento",
-        copy: "Registra pendientes operativos, tecnicos o administrativos y hazles seguimiento."
+        copy: "Gestiona tareas operativas, técnicas y administrativas con seguimiento por estado."
       },
       incidentes: {
         title: "Incidentes",
-        copy: "Guarda eventos, problemas o alertas para no perder trazabilidad."
-      },
-      roadmap: {
-        title: "Proximo desarrollo",
-        copy: "Una hoja de ruta simple para seguir completando la app sobre esta misma base."
+        copy: "Registra eventos, alertas o incidencias con trazabilidad y seguimiento."
       }
     };
 
@@ -1115,7 +1045,8 @@
       state.locales = Array.isArray(data.locales) ? data.locales : [];
       state.tareas = Array.isArray(data.tareas) ? data.tareas : [];
       state.incidentes = Array.isArray(data.incidentes) ? data.incidentes : [];
-      setStatusBanner("ok", "Servidor conectado. Los cambios se estan guardando en la base de datos local.");
+      statusBanner.className = "status-banner";
+      statusBanner.textContent = "";
       render();
     }
 
@@ -1162,8 +1093,8 @@
     function renderSummary() {
       if (!state.locales.length && !state.tareas.length && !state.incidentes.length) {
         dashboardSummary.innerHTML = emptyState(
-          "Todavia no hay informacion cargada",
-          "Empieza por agregar un local, una tarea o un incidente. El dashboard se completa solo a medida que registres datos."
+          "Sin información registrada",
+          "Aún no existen registros disponibles para mostrar en el panel."
         );
         return;
       }
@@ -1196,7 +1127,7 @@
     function renderLocales() {
       if (!state.locales.length) {
         document.getElementById("locales-count-badge").textContent = "0 locales";
-        localesList.innerHTML = emptyState("No hay locales registrados", "Agrega el primer local para iniciar la base comercial.");
+        localesList.innerHTML = emptyState("Sin locales registrados", "No existen locales cargados actualmente.");
         return;
       }
 
@@ -1210,7 +1141,7 @@
       document.getElementById("locales-count-badge").textContent = formatVisibleCount(filteredLocales.length, state.locales.length, "locales");
 
       if (!filteredLocales.length) {
-        localesList.innerHTML = emptyState("No hay coincidencias para este filtro", "Prueba limpiando el buscador o cambiando el estado seleccionado.");
+        localesList.innerHTML = emptyState("Sin resultados", "No se encontraron locales con los filtros seleccionados.");
         return;
       }
 
@@ -1245,7 +1176,7 @@
     function renderTasks() {
       if (!state.tareas.length) {
         document.getElementById("tareas-count-badge").textContent = "0 tareas";
-        tasksList.innerHTML = emptyState("No hay tareas registradas", "Agrega la primera tarea para empezar el seguimiento de mantencion.");
+        tasksList.innerHTML = emptyState("Sin tareas registradas", "No existen tareas cargadas actualmente.");
         return;
       }
 
@@ -1259,7 +1190,7 @@
       document.getElementById("tareas-count-badge").textContent = formatVisibleCount(filteredTasks.length, state.tareas.length, "tareas");
 
       if (!filteredTasks.length) {
-        tasksList.innerHTML = emptyState("No hay coincidencias para este filtro", "Prueba con otro texto o selecciona un estado distinto.");
+        tasksList.innerHTML = emptyState("Sin resultados", "No se encontraron tareas con los filtros seleccionados.");
         return;
       }
 
@@ -1293,7 +1224,7 @@
     function renderIncidents() {
       if (!state.incidentes.length) {
         document.getElementById("incidentes-count-badge").textContent = "0 incidentes";
-        incidentsList.innerHTML = emptyState("No hay incidentes registrados", "Agrega el primer incidente cuando necesites dejar trazabilidad de un caso.");
+        incidentsList.innerHTML = emptyState("Sin incidentes registrados", "No existen incidentes cargados actualmente.");
         return;
       }
 
@@ -1308,7 +1239,7 @@
       document.getElementById("incidentes-count-badge").textContent = formatVisibleCount(filteredIncidents.length, state.incidentes.length, "incidentes");
 
       if (!filteredIncidents.length) {
-        incidentsList.innerHTML = emptyState("No hay coincidencias para este filtro", "Ajusta texto, estado o nivel para volver a ver resultados.");
+        incidentsList.innerHTML = emptyState("Sin resultados", "No se encontraron incidentes con los filtros seleccionados.");
         return;
       }
 
