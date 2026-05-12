@@ -652,12 +652,13 @@
       <div class="brand">
         <span class="eyebrow">Gestión comercial</span>
         <h1>Panel Comercial</h1>
-        <p>Plataforma de gestión para locales, mantenimiento e incidentes.</p>
+        <p>Plataforma de gestión para locales, bodegas, mantenimiento e incidentes.</p>
       </div>
 
       <nav class="nav" aria-label="Navegacion principal">
         <button class="active" data-panel="dashboard">Dashboard</button>
         <button data-panel="locales">Locales</button>
+        <button data-panel="bodegas">Bodegas</button>
         <button data-panel="tareas">Mantenimiento</button>
         <button data-panel="incidentes">Incidentes</button>
       </nav>
@@ -681,7 +682,7 @@
           </button>
           <div>
             <h2 id="page-title">Dashboard</h2>
-            <p id="page-copy">Administra locales, mantenimiento e incidentes desde un solo lugar.</p>
+            <p id="page-copy">Administra locales, bodegas, mantenimiento e incidentes desde un solo lugar.</p>
           </div>
         </div>
 
@@ -695,10 +696,19 @@
         <div class="hero">
           <span class="eyebrow" style="color: #1d4ed8;">Panel de control</span>
           <h3>Gestión comercial y operativa</h3>
-          <p>Visualiza el estado general de locales, tareas e incidentes con acceso rápido a la información clave.</p>
+          <p>Visualiza el estado general de locales, bodegas, tareas e incidentes con acceso rápido a la información clave.</p>
         </div>
 
         <div class="grid stats">
+          <article class="card stat-card">
+            <div class="stat-icon">📦</div>
+            <div>
+              <h3>Bodegas</h3>
+              <div class="stat-number" id="stat-bodegas">0</div>
+              <p>Total de bodegas registradas</p>
+            </div>
+          </article>
+
           <article class="card stat-card">
             <div class="stat-icon">🏬</div>
             <div>
@@ -750,6 +760,10 @@
               <div class="roadmap-item">
                 <strong>Locales</strong>
                 <span class="helper">Control de ocupación, contacto comercial y estado de cada unidad.</span>
+              </div>
+              <div class="roadmap-item">
+                <strong>Bodegas</strong>
+                <span class="helper">Seguimiento de espacios de almacenamiento y su disponibilidad.</span>
               </div>
               <div class="roadmap-item">
                 <strong>Mantenimiento</strong>
@@ -836,6 +850,62 @@
                 <button class="btn btn-primary" id="locale-submit" type="submit">Guardar local</button>
                 <button class="btn btn-secondary" id="locale-cancel" type="button" hidden>Cancelar edicion</button>
                 <span class="hint">Registra y actualiza la información comercial del local.</span>
+              </div>
+            </form>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-bodegas">
+        <div class="module-shell">
+          <article class="card module-subview active" id="storages-list-view">
+            <div class="module-toolbar">
+              <div>
+                <h3 class="section-title">Bodegas</h3>
+                <p class="section-subtitle">Revisa y administra la disponibilidad de cada bodega.</p>
+              </div>
+              <div class="module-actions">
+                <span class="badge badge-blue" id="bodegas-count-badge">0 bodegas</span>
+                <button class="btn btn-primary" type="button" id="storage-add-button">Agregar bodega</button>
+              </div>
+            </div>
+            <div class="filter-bar compact">
+              <input id="storages-search" type="search" placeholder="Buscar por nombre" />
+              <select id="storages-filter-status">
+                <option value="todos">Todos los estados</option>
+                <option value="disponible">Disponible</option>
+                <option value="ocupado">Ocupada</option>
+              </select>
+            </div>
+            <div class="list" id="storages-list"></div>
+          </article>
+
+          <article class="card module-subview" id="storages-form-view">
+            <a class="back-link" id="storage-back-link">← Volver al listado</a>
+            <h3 class="section-title" id="storage-form-title">Nueva bodega</h3>
+            <p class="section-subtitle">Ingresa el nombre y disponibilidad de la bodega.</p>
+
+            <form id="storage-form">
+              <div class="form-note" id="storage-form-note" hidden>Editando bodega existente.</div>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="storage-name">Nombre</label>
+                  <input id="storage-name" name="name" placeholder="Ej: Bodega Norte" required />
+                </div>
+
+                <div class="field">
+                  <label for="storage-status">Estado</label>
+                  <select id="storage-status" name="status">
+                    <option value="disponible">Disponible</option>
+                    <option value="ocupado">Ocupada</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="actions">
+                <button class="btn btn-primary" id="storage-submit" type="submit">Guardar bodega</button>
+                <button class="btn btn-secondary" id="storage-cancel" type="button" hidden>Cancelar edicion</button>
+                <span class="hint">Registra y actualiza la disponibilidad de la bodega.</span>
               </div>
             </form>
           </article>
@@ -1002,11 +1072,15 @@
     const pageMeta = {
       dashboard: {
         title: "Dashboard",
-        copy: "Administra locales, mantenimiento e incidentes desde un solo lugar."
+        copy: "Administra locales, bodegas, mantenimiento e incidentes desde un solo lugar."
       },
       locales: {
         title: "Locales",
         copy: "Consulta, registra y actualiza la información de cada local."
+      },
+      bodegas: {
+        title: "Bodegas",
+        copy: "Consulta, registra y actualiza la disponibilidad de cada bodega."
       },
       tareas: {
         title: "Mantenimiento",
@@ -1020,27 +1094,32 @@
 
     const state = {
       locales: [],
+      bodegas: [],
       tareas: [],
       incidentes: []
     };
     const editing = {
       locale: null,
+      storage: null,
       task: null,
       incident: null
     };
     const moduleViews = {
       locales: "list",
+      bodegas: "list",
       tareas: "list",
       incidentes: "list"
     };
     const filters = {
       locales: { query: "", status: "todos" },
+      storages: { query: "", status: "todos" },
       tasks: { query: "", status: "todos" },
       incidents: { query: "", status: "todos", level: "todos" }
     };
 
     const dashboardSummary = document.getElementById("dashboard-summary");
     const localesList = document.getElementById("locales-list");
+    const storagesList = document.getElementById("storages-list");
     const tasksList = document.getElementById("tasks-list");
     const incidentsList = document.getElementById("incidents-list");
     const statusBanner = document.getElementById("status-banner");
@@ -1052,6 +1131,7 @@
     document.querySelectorAll(".nav button").forEach((button) => {
       button.addEventListener("click", () => {
         if (button.dataset.panel === "locales") moduleViews.locales = "list";
+        if (button.dataset.panel === "bodegas") moduleViews.bodegas = "list";
         if (button.dataset.panel === "tareas") moduleViews.tareas = "list";
         if (button.dataset.panel === "incidentes") moduleViews.incidentes = "list";
         switchPanel(button.dataset.panel);
@@ -1069,12 +1149,15 @@
     });
 
     document.getElementById("locale-cancel").addEventListener("click", () => resetFormMode("locale"));
+    document.getElementById("storage-cancel").addEventListener("click", () => resetFormMode("storage"));
     document.getElementById("task-cancel").addEventListener("click", () => resetFormMode("task"));
     document.getElementById("incident-cancel").addEventListener("click", () => resetFormMode("incident"));
     document.getElementById("locale-back-link").addEventListener("click", () => resetFormMode("locale"));
+    document.getElementById("storage-back-link").addEventListener("click", () => resetFormMode("storage"));
     document.getElementById("task-back-link").addEventListener("click", () => resetFormMode("task"));
     document.getElementById("incident-back-link").addEventListener("click", () => resetFormMode("incident"));
     document.getElementById("locale-add-button").addEventListener("click", () => openCreateView("locale"));
+    document.getElementById("storage-add-button").addEventListener("click", () => openCreateView("storage"));
     document.getElementById("task-add-button").addEventListener("click", () => openCreateView("task"));
     document.getElementById("incident-add-button").addEventListener("click", () => openCreateView("incident"));
     document.getElementById("locales-search").addEventListener("input", (event) => {
@@ -1084,6 +1167,14 @@
     document.getElementById("locales-filter-status").addEventListener("change", (event) => {
       filters.locales.status = event.target.value;
       renderLocales();
+    });
+    document.getElementById("storages-search").addEventListener("input", (event) => {
+      filters.storages.query = event.target.value.trim();
+      renderStorages();
+    });
+    document.getElementById("storages-filter-status").addEventListener("change", (event) => {
+      filters.storages.status = event.target.value;
+      renderStorages();
     });
     document.getElementById("tasks-search").addEventListener("input", (event) => {
       filters.tasks.query = event.target.value.trim();
@@ -1128,6 +1219,29 @@
         await loadState();
         moduleViews.locales = "list";
         switchPanel("locales");
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+
+    document.getElementById("storage-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget);
+      const payload = {
+        name: formData.get("name").trim(),
+        status: formData.get("status")
+      };
+
+      try {
+        if (editing.storage) {
+          await api(`/api/bodegas/${editing.storage}`, { method: "PUT", body: payload });
+        } else {
+          await api("/api/bodegas", { method: "POST", body: payload });
+        }
+        resetFormMode("storage");
+        await loadState();
+        moduleViews.bodegas = "list";
+        switchPanel("bodegas");
       } catch (error) {
         alert(error.message);
       }
@@ -1191,6 +1305,7 @@
       try {
         await Promise.all([
           ...state.locales.map((item) => api(`/api/locales/${item.id}`, { method: "DELETE" })),
+          ...state.bodegas.map((item) => api(`/api/bodegas/${item.id}`, { method: "DELETE" })),
           ...state.tareas.map((item) => api(`/api/tareas/${item.id}`, { method: "DELETE" })),
           ...state.incidentes.map((item) => api(`/api/incidentes/${item.id}`, { method: "DELETE" }))
         ]);
@@ -1235,6 +1350,7 @@
     async function loadState() {
       const data = await api("/api/state");
       state.locales = Array.isArray(data.locales) ? data.locales : [];
+      state.bodegas = Array.isArray(data.bodegas) ? data.bodegas : [];
       state.tareas = Array.isArray(data.tareas) ? data.tareas : [];
       state.incidentes = Array.isArray(data.incidentes) ? data.incidentes : [];
       statusBanner.className = "status-banner";
@@ -1269,6 +1385,7 @@
       document.getElementById("page-copy").textContent = pageMeta[panelName].copy;
 
       if (panelName === "locales") showModuleView("locales", moduleViews.locales);
+      if (panelName === "bodegas") showModuleView("bodegas", moduleViews.bodegas);
       if (panelName === "tareas") showModuleView("tareas", moduleViews.tareas);
       if (panelName === "incidentes") showModuleView("incidentes", moduleViews.incidentes);
     }
@@ -1277,6 +1394,7 @@
       renderStats();
       renderSummary();
       renderLocales();
+      renderStorages();
       renderTasks();
       renderIncidents();
     }
@@ -1286,17 +1404,19 @@
       const activeTasks = state.tareas.filter((item) => item.status !== "completada").length;
       const openIncidents = state.incidentes.filter((item) => item.status !== "resuelto").length;
 
+      document.getElementById("stat-bodegas").textContent = String(state.bodegas.length);
       document.getElementById("stat-locales").textContent = String(state.locales.length);
       document.getElementById("stat-ocupados").textContent = String(occupied);
       document.getElementById("stat-tareas").textContent = String(activeTasks);
       document.getElementById("stat-incidentes").textContent = String(openIncidents);
       document.getElementById("locales-count-badge").textContent = `${state.locales.length} locales`;
+      document.getElementById("bodegas-count-badge").textContent = `${state.bodegas.length} bodegas`;
       document.getElementById("tareas-count-badge").textContent = `${state.tareas.length} tareas`;
       document.getElementById("incidentes-count-badge").textContent = `${state.incidentes.length} incidentes`;
     }
 
     function renderSummary() {
-      if (!state.locales.length && !state.tareas.length && !state.incidentes.length) {
+      if (!state.locales.length && !state.bodegas.length && !state.tareas.length && !state.incidentes.length) {
         dashboardSummary.innerHTML = emptyState(
           "Sin información registrada",
           "Aún no existen registros disponibles para mostrar en el panel."
@@ -1308,6 +1428,10 @@
         {
           title: "Ultimo local registrado",
           text: state.locales[0] ? `${state.locales[0].number} - ${state.locales[0].name}` : "Aun no hay locales cargados."
+        },
+        {
+          title: "Ultima bodega registrada",
+          text: state.bodegas[0] ? `${state.bodegas[0].name} - ${capitalize(state.bodegas[0].status)}` : "Aun no hay bodegas cargadas."
         },
         {
           title: "Ultima tarea registrada",
@@ -1371,6 +1495,52 @@
             </select>
             <button class="btn btn-secondary" type="button" data-edit="locale" data-id="${item.id}">Editar</button>
             <button class="btn btn-secondary" type="button" data-delete="locale" data-id="${item.id}">Eliminar</button>
+          </div>
+        </article>
+      `).join("");
+
+      bindListActions();
+    }
+
+    function renderStorages() {
+      if (!state.bodegas.length) {
+        document.getElementById("bodegas-count-badge").textContent = "0 bodegas";
+        storagesList.innerHTML = emptyState("Sin bodegas registradas", "No existen bodegas cargadas actualmente.");
+        return;
+      }
+
+      const filteredStorages = state.bodegas.filter((item) => {
+        const query = normalize(filters.storages.query);
+        const matchesQuery = !query || normalize(item.name).includes(query);
+        const matchesStatus = filters.storages.status === "todos" || item.status === filters.storages.status;
+        return matchesQuery && matchesStatus;
+      });
+
+      document.getElementById("bodegas-count-badge").textContent = formatVisibleCount(filteredStorages.length, state.bodegas.length, "bodegas");
+
+      if (!filteredStorages.length) {
+        storagesList.innerHTML = emptyState("Sin resultados", "No se encontraron bodegas con los filtros seleccionados.");
+        return;
+      }
+
+      storagesList.innerHTML = filteredStorages.map((item) => `
+        <article class="list-item">
+          <div class="list-head">
+            <div>
+              <h4>${escapeHtml(item.name)}</h4>
+              <div class="meta">
+                <span>Espacio de almacenamiento</span>
+              </div>
+            </div>
+            ${renderBadge(item.status, "storage")}
+          </div>
+          <div class="actions">
+            <select data-type="storage" data-id="${item.id}">
+              <option value="disponible" ${item.status === "disponible" ? "selected" : ""}>Disponible</option>
+              <option value="ocupado" ${item.status === "ocupado" ? "selected" : ""}>Ocupada</option>
+            </select>
+            <button class="btn btn-secondary" type="button" data-edit="storage" data-id="${item.id}">Editar</button>
+            <button class="btn btn-secondary" type="button" data-delete="storage" data-id="${item.id}">Eliminar</button>
           </div>
         </article>
       `).join("");
@@ -1487,6 +1657,7 @@
           const id = button.dataset.id;
           try {
             if (type === "locale") await api(`/api/locales/${id}`, { method: "DELETE" });
+            if (type === "storage") await api(`/api/bodegas/${id}`, { method: "DELETE" });
             if (type === "task") await api(`/api/tareas/${id}`, { method: "DELETE" });
             if (type === "incident") await api(`/api/incidentes/${id}`, { method: "DELETE" });
             if (editing[type] === id) resetFormMode(type);
@@ -1503,6 +1674,7 @@
           const id = select.dataset.id;
           try {
             if (type === "locale") await api(`/api/locales/${id}/status`, { method: "PATCH", body: { status: select.value } });
+            if (type === "storage") await api(`/api/bodegas/${id}/status`, { method: "PATCH", body: { status: select.value } });
             if (type === "task") await api(`/api/tareas/${id}/status`, { method: "PATCH", body: { status: select.value } });
             if (type === "incident") await api(`/api/incidentes/${id}/status`, { method: "PATCH", body: { status: select.value } });
             await loadState();
@@ -1531,6 +1703,16 @@
         moduleViews.locales = "form";
         switchPanel("locales");
         document.getElementById("locale-number").focus();
+      }
+
+      if (type === "storage") {
+        const form = document.getElementById("storage-form");
+        form.name.value = item.name || "";
+        form.status.value = item.status || "disponible";
+        applyFormMode("storage", "Editar bodega", "Actualizar bodega", "Editando una bodega existente.");
+        moduleViews.bodegas = "form";
+        switchPanel("bodegas");
+        document.getElementById("storage-name").focus();
       }
 
       if (type === "task") {
@@ -1571,6 +1753,15 @@
         showModuleView("locales", "list");
       }
 
+      if (type === "storage") {
+        const form = document.getElementById("storage-form");
+        form.reset();
+        form.status.value = "disponible";
+        applyDefaultFormMode("storage", "Nueva bodega", "Guardar bodega");
+        moduleViews.bodegas = "list";
+        showModuleView("bodegas", "list");
+      }
+
       if (type === "task") {
         const form = document.getElementById("task-form");
         form.reset();
@@ -1593,6 +1784,7 @@
 
     function resetAllFormModes() {
       resetFormMode("locale");
+      resetFormMode("storage");
       resetFormMode("task");
       resetFormMode("incident");
     }
@@ -1600,6 +1792,8 @@
     function resetAllFilters() {
       filters.locales.query = "";
       filters.locales.status = "todos";
+      filters.storages.query = "";
+      filters.storages.status = "todos";
       filters.tasks.query = "";
       filters.tasks.status = "todos";
       filters.incidents.query = "";
@@ -1608,6 +1802,8 @@
 
       document.getElementById("locales-search").value = "";
       document.getElementById("locales-filter-status").value = "todos";
+      document.getElementById("storages-search").value = "";
+      document.getElementById("storages-filter-status").value = "todos";
       document.getElementById("tasks-search").value = "";
       document.getElementById("tasks-filter-status").value = "todos";
       document.getElementById("incidents-search").value = "";
@@ -1639,6 +1835,13 @@
         switchPanel("locales");
         document.getElementById("locale-number").focus();
       }
+      if (type === "storage") {
+        moduleViews.bodegas = "form";
+        applyDefaultFormMode("storage", "Nueva bodega", "Guardar bodega");
+        showModuleView("bodegas", "form");
+        switchPanel("bodegas");
+        document.getElementById("storage-name").focus();
+      }
       if (type === "task") {
         moduleViews.tareas = "form";
         applyDefaultFormMode("task", "Nueva tarea", "Guardar tarea");
@@ -1661,6 +1864,10 @@
           list: document.getElementById("locales-list-view"),
           form: document.getElementById("locales-form-view")
         },
+        bodegas: {
+          list: document.getElementById("storages-list-view"),
+          form: document.getElementById("storages-form-view")
+        },
         tareas: {
           list: document.getElementById("tasks-list-view"),
           form: document.getElementById("tasks-form-view")
@@ -1679,6 +1886,7 @@
 
     function findItem(type, id) {
       if (type === "locale") return state.locales.find((item) => item.id === id);
+      if (type === "storage") return state.bodegas.find((item) => item.id === id);
       if (type === "task") return state.tareas.find((item) => item.id === id);
       if (type === "incident") return state.incidentes.find((item) => item.id === id);
       return null;
@@ -1690,6 +1898,10 @@
         ocupado: ["badge-green", "Ocupado"],
         reservado: ["badge-yellow", "Reservado"]
       };
+      const storageMap = {
+        disponible: ["badge-blue", "Disponible"],
+        ocupado: ["badge-green", "Ocupada"]
+      };
       const taskMap = {
         pendiente: ["badge-yellow", "Pendiente"],
         "en progreso": ["badge-blue", "En progreso"],
@@ -1700,7 +1912,7 @@
         "en revision": ["badge-yellow", "En revision"],
         resuelto: ["badge-green", "Resuelto"]
       };
-      const maps = { locale: localeMap, task: taskMap, incident: incidentMap };
+      const maps = { locale: localeMap, storage: storageMap, task: taskMap, incident: incidentMap };
       const [styleClass, label] = maps[kind][status] || ["badge-blue", capitalize(status)];
       return `<span class="badge ${styleClass}">${escapeHtml(label)}</span>`;
     }

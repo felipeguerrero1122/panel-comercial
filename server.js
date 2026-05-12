@@ -31,6 +31,14 @@ function validateLocale(body) {
   };
 }
 
+function validateStorage(body) {
+  return {
+    id: sanitizeString(body.id) || createId(),
+    name: sanitizeString(body.name),
+    status: sanitizeString(body.status) || "disponible"
+  };
+}
+
 function validateTask(body) {
   return {
     id: sanitizeString(body.id) || createId(),
@@ -76,6 +84,13 @@ function createSqliteStore() {
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
 
+    CREATE TABLE IF NOT EXISTS bodegas (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'disponible',
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+
     CREATE TABLE IF NOT EXISTS tareas (
       id TEXT PRIMARY KEY,
       title TEXT NOT NULL,
@@ -101,6 +116,11 @@ function createSqliteStore() {
     FROM locales
     ORDER BY datetime(created_at) DESC
   `);
+  const listBodegas = db.prepare(`
+    SELECT id, name, status
+    FROM bodegas
+    ORDER BY datetime(created_at) DESC
+  `);
   const listTareas = db.prepare(`
     SELECT id, title, area, date, status
     FROM tareas
@@ -117,6 +137,7 @@ function createSqliteStore() {
     async getState() {
       return {
         locales: listLocales.all(),
+        bodegas: listBodegas.all(),
         tareas: listTareas.all(),
         incidentes: listIncidentes.all()
       };
@@ -142,6 +163,27 @@ function createSqliteStore() {
     },
     async deleteLocale(id) {
       return db.prepare(`DELETE FROM locales WHERE id = ?`).run(id).changes > 0;
+    },
+    async createStorage(storage) {
+      db.prepare(`
+        INSERT INTO bodegas (id, name, status)
+        VALUES (@id, @name, @status)
+      `).run(storage);
+      return storage;
+    },
+    async updateStorage(storage) {
+      const result = db.prepare(`
+        UPDATE bodegas
+        SET name = @name, status = @status
+        WHERE id = @id
+      `).run(storage);
+      return result.changes > 0;
+    },
+    async updateStorageStatus(id, status) {
+      return db.prepare(`UPDATE bodegas SET status = ? WHERE id = ?`).run(status, id).changes > 0;
+    },
+    async deleteStorage(id) {
+      return db.prepare(`DELETE FROM bodegas WHERE id = ?`).run(id).changes > 0;
     },
     async createTask(task) {
       db.prepare(`
@@ -213,6 +255,14 @@ function createPostgresStore() {
         );
       `);
       await query(`
+        CREATE TABLE IF NOT EXISTS bodegas (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          status TEXT NOT NULL DEFAULT 'disponible',
+          created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        );
+      `);
+      await query(`
         CREATE TABLE IF NOT EXISTS tareas (
           id TEXT PRIMARY KEY,
           title TEXT NOT NULL,
@@ -235,13 +285,15 @@ function createPostgresStore() {
       `);
     },
     async getState() {
-      const [locales, tareas, incidentes] = await Promise.all([
+      const [locales, bodegas, tareas, incidentes] = await Promise.all([
         query(`SELECT id, number, name, tenant, phone, category, status FROM locales ORDER BY created_at DESC`),
+        query(`SELECT id, name, status FROM bodegas ORDER BY created_at DESC`),
         query(`SELECT id, title, area, date, status FROM tareas ORDER BY created_at DESC`),
         query(`SELECT id, description, level, status, date, source FROM incidentes ORDER BY created_at DESC`)
       ]);
       return {
         locales: locales.rows,
+        bodegas: bodegas.rows,
         tareas: tareas.rows,
         incidentes: incidentes.rows
       };
@@ -266,6 +318,28 @@ function createPostgresStore() {
     },
     async deleteLocale(id) {
       const result = await query(`DELETE FROM locales WHERE id = $1`, [id]);
+      return result.rowCount > 0;
+    },
+    async createStorage(storage) {
+      await query(
+        `INSERT INTO bodegas (id, name, status) VALUES ($1, $2, $3)`,
+        [storage.id, storage.name, storage.status]
+      );
+      return storage;
+    },
+    async updateStorage(storage) {
+      const result = await query(
+        `UPDATE bodegas SET name = $1, status = $2 WHERE id = $3`,
+        [storage.name, storage.status, storage.id]
+      );
+      return result.rowCount > 0;
+    },
+    async updateStorageStatus(id, status) {
+      const result = await query(`UPDATE bodegas SET status = $1 WHERE id = $2`, [status, id]);
+      return result.rowCount > 0;
+    },
+    async deleteStorage(id) {
+      const result = await query(`DELETE FROM bodegas WHERE id = $1`, [id]);
       return result.rowCount > 0;
     },
     async createTask(task) {
@@ -348,6 +422,32 @@ app.patch("/api/locales/:id/status", async (req, res) => {
 app.delete("/api/locales/:id", async (req, res) => {
   const ok = await store.deleteLocale(req.params.id);
   if (!ok) return res.status(404).json({ error: "Local no encontrado." });
+  res.status(204).end();
+});
+
+app.post("/api/bodegas", async (req, res) => {
+  const storage = validateStorage(req.body);
+  if (!storage.name) return badRequest(res, "El nombre es obligatorio.");
+  res.status(201).json(await store.createStorage(storage));
+});
+
+app.put("/api/bodegas/:id", async (req, res) => {
+  const storage = validateStorage({ ...req.body, id: req.params.id });
+  if (!storage.name) return badRequest(res, "El nombre es obligatorio.");
+  const ok = await store.updateStorage(storage);
+  if (!ok) return res.status(404).json({ error: "Bodega no encontrada." });
+  res.json(storage);
+});
+
+app.patch("/api/bodegas/:id/status", async (req, res) => {
+  const ok = await store.updateStorageStatus(req.params.id, sanitizeString(req.body.status));
+  if (!ok) return res.status(404).json({ error: "Bodega no encontrada." });
+  res.json({ ok: true });
+});
+
+app.delete("/api/bodegas/:id", async (req, res) => {
+  const ok = await store.deleteStorage(req.params.id);
+  if (!ok) return res.status(404).json({ error: "Bodega no encontrada." });
   res.status(204).end();
 });
 
