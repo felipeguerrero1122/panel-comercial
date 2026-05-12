@@ -870,7 +870,7 @@
               </div>
             </div>
             <div class="filter-bar compact">
-              <input id="storages-search" type="search" placeholder="Buscar por nombre" />
+              <input id="storages-search" type="search" placeholder="Buscar por numero, nombre o telefono" />
               <select id="storages-filter-status">
                 <option value="todos">Todos los estados</option>
                 <option value="disponible">Disponible</option>
@@ -889,8 +889,23 @@
               <div class="form-note" id="storage-form-note" hidden>Editando bodega existente.</div>
               <div class="form-grid">
                 <div class="field">
+                  <label for="storage-number">Numero de bodega</label>
+                  <input id="storage-number" name="number" placeholder="Ej: B-01" />
+                </div>
+
+                <div class="field">
                   <label for="storage-name">Nombre</label>
                   <input id="storage-name" name="name" placeholder="Ej: Bodega Norte" required />
+                </div>
+
+                <div class="field">
+                  <label for="storage-delivery-date">Fecha de entrega</label>
+                  <input id="storage-delivery-date" name="deliveryDate" type="date" />
+                </div>
+
+                <div class="field">
+                  <label for="storage-phone">Telefono</label>
+                  <input id="storage-phone" name="phone" placeholder="Ej: +56 9 1111 2222" />
                 </div>
 
                 <div class="field">
@@ -1228,7 +1243,10 @@
       event.preventDefault();
       const formData = new FormData(event.currentTarget);
       const payload = {
+        number: formData.get("number").trim(),
         name: formData.get("name").trim(),
+        deliveryDate: formData.get("deliveryDate"),
+        phone: formData.get("phone").trim(),
         status: formData.get("status")
       };
 
@@ -1511,7 +1529,7 @@
 
       const filteredStorages = state.bodegas.filter((item) => {
         const query = normalize(filters.storages.query);
-        const matchesQuery = !query || normalize(item.name).includes(query);
+        const matchesQuery = !query || normalize([item.number, item.name, item.phone].join(" ")).includes(query);
         const matchesStatus = filters.storages.status === "todos" || item.status === filters.storages.status;
         return matchesQuery && matchesStatus;
       });
@@ -1527,9 +1545,10 @@
         <article class="list-item">
           <div class="list-head">
             <div>
-              <h4>${escapeHtml(item.name)}</h4>
+              <h4>${escapeHtml(item.number ? `${item.number} - ${item.name}` : item.name)}</h4>
               <div class="meta">
-                <span>Espacio de almacenamiento</span>
+                <span>${escapeHtml(item.phone || "Sin telefono")}</span>
+                <span>${escapeHtml(item.deliveryDate || "Sin fecha de entrega")}</span>
               </div>
             </div>
             ${renderBadge(item.status, "storage")}
@@ -1707,7 +1726,10 @@
 
       if (type === "storage") {
         const form = document.getElementById("storage-form");
+        form.number.value = item.number || "";
         form.name.value = item.name || "";
+        form.deliveryDate.value = item.deliveryDate || "";
+        form.phone.value = item.phone || "";
         form.status.value = item.status || "disponible";
         applyFormMode("storage", "Editar bodega", "Actualizar bodega", "Editando una bodega existente.");
         moduleViews.bodegas = "form";

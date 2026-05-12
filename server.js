@@ -34,7 +34,10 @@ function validateLocale(body) {
 function validateStorage(body) {
   return {
     id: sanitizeString(body.id) || createId(),
+    number: sanitizeString(body.number),
     name: sanitizeString(body.name),
+    deliveryDate: sanitizeString(body.deliveryDate),
+    phone: sanitizeString(body.phone),
     status: sanitizeString(body.status) || "disponible"
   };
 }
@@ -86,7 +89,10 @@ function createSqliteStore() {
 
     CREATE TABLE IF NOT EXISTS bodegas (
       id TEXT PRIMARY KEY,
+      number TEXT DEFAULT '',
       name TEXT NOT NULL,
+      delivery_date TEXT DEFAULT '',
+      phone TEXT DEFAULT '',
       status TEXT NOT NULL DEFAULT 'disponible',
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
@@ -110,6 +116,17 @@ function createSqliteStore() {
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
   `);
+  const ensureBodegaColumn = (sql) => {
+    try {
+      db.exec(sql);
+    } catch (error) {
+      if (!String(error.message || "").includes("duplicate column name")) throw error;
+    }
+  };
+
+  ensureBodegaColumn(`ALTER TABLE bodegas ADD COLUMN number TEXT DEFAULT ''`);
+  ensureBodegaColumn(`ALTER TABLE bodegas ADD COLUMN delivery_date TEXT DEFAULT ''`);
+  ensureBodegaColumn(`ALTER TABLE bodegas ADD COLUMN phone TEXT DEFAULT ''`);
 
   const listLocales = db.prepare(`
     SELECT id, number, name, tenant, phone, category, status
@@ -117,7 +134,7 @@ function createSqliteStore() {
     ORDER BY datetime(created_at) DESC
   `);
   const listBodegas = db.prepare(`
-    SELECT id, name, status
+    SELECT id, number, name, delivery_date AS deliveryDate, phone, status
     FROM bodegas
     ORDER BY datetime(created_at) DESC
   `);
@@ -166,15 +183,15 @@ function createSqliteStore() {
     },
     async createStorage(storage) {
       db.prepare(`
-        INSERT INTO bodegas (id, name, status)
-        VALUES (@id, @name, @status)
+        INSERT INTO bodegas (id, number, name, delivery_date, phone, status)
+        VALUES (@id, @number, @name, @deliveryDate, @phone, @status)
       `).run(storage);
       return storage;
     },
     async updateStorage(storage) {
       const result = db.prepare(`
         UPDATE bodegas
-        SET name = @name, status = @status
+        SET number = @number, name = @name, delivery_date = @deliveryDate, phone = @phone, status = @status
         WHERE id = @id
       `).run(storage);
       return result.changes > 0;
@@ -257,11 +274,17 @@ function createPostgresStore() {
       await query(`
         CREATE TABLE IF NOT EXISTS bodegas (
           id TEXT PRIMARY KEY,
+          number TEXT DEFAULT '',
           name TEXT NOT NULL,
+          delivery_date TEXT DEFAULT '',
+          phone TEXT DEFAULT '',
           status TEXT NOT NULL DEFAULT 'disponible',
           created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
         );
       `);
+      await query(`ALTER TABLE bodegas ADD COLUMN IF NOT EXISTS number TEXT DEFAULT ''`);
+      await query(`ALTER TABLE bodegas ADD COLUMN IF NOT EXISTS delivery_date TEXT DEFAULT ''`);
+      await query(`ALTER TABLE bodegas ADD COLUMN IF NOT EXISTS phone TEXT DEFAULT ''`);
       await query(`
         CREATE TABLE IF NOT EXISTS tareas (
           id TEXT PRIMARY KEY,
@@ -287,7 +310,7 @@ function createPostgresStore() {
     async getState() {
       const [locales, bodegas, tareas, incidentes] = await Promise.all([
         query(`SELECT id, number, name, tenant, phone, category, status FROM locales ORDER BY created_at DESC`),
-        query(`SELECT id, name, status FROM bodegas ORDER BY created_at DESC`),
+        query(`SELECT id, number, name, delivery_date AS "deliveryDate", phone, status FROM bodegas ORDER BY created_at DESC`),
         query(`SELECT id, title, area, date, status FROM tareas ORDER BY created_at DESC`),
         query(`SELECT id, description, level, status, date, source FROM incidentes ORDER BY created_at DESC`)
       ]);
@@ -322,15 +345,15 @@ function createPostgresStore() {
     },
     async createStorage(storage) {
       await query(
-        `INSERT INTO bodegas (id, name, status) VALUES ($1, $2, $3)`,
-        [storage.id, storage.name, storage.status]
+        `INSERT INTO bodegas (id, number, name, delivery_date, phone, status) VALUES ($1, $2, $3, $4, $5, $6)`,
+        [storage.id, storage.number, storage.name, storage.deliveryDate, storage.phone, storage.status]
       );
       return storage;
     },
     async updateStorage(storage) {
       const result = await query(
-        `UPDATE bodegas SET name = $1, status = $2 WHERE id = $3`,
-        [storage.name, storage.status, storage.id]
+        `UPDATE bodegas SET number = $1, name = $2, delivery_date = $3, phone = $4, status = $5 WHERE id = $6`,
+        [storage.number, storage.name, storage.deliveryDate, storage.phone, storage.status, storage.id]
       );
       return result.rowCount > 0;
     },
